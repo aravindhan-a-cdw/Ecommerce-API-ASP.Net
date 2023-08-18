@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿
 using Microsoft.AspNetCore.Mvc;
+using EcommerceAPI.Models.DTO.User;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -10,53 +8,23 @@ namespace EcommerceAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class CustomerAuthController : ControllerBase
+    public class UserAuthController : ControllerBase
     {
-        private readonly ILogger<CustomerAuthController> _logger;
+        private readonly ILogger<UserAuthController> _logger;
 
-        public CustomerAuthController(ILogger<CustomerAuthController> logger)
+        public UserAuthController(ILogger<UserAuthController> logger)
         {
             _logger = logger;
         }
 
         [HttpPost("Registration")]
-        public IActionResult CustomerRegistraion()
+        public IActionResult CustomerRegistraion([FromBody] UserCreateDTO UserData)
         {
             return Ok("Hello");
         }
 
         [HttpPost("Login")]
-        public IActionResult CustomerLogin()
-        {
-            return Ok("Hello");
-        }
-
-        [HttpPost("Logout")]
-        public IActionResult CustomerLogout()
-        {
-            return Ok("Hello");
-        }
-    }
-
-    [ApiController]
-    [Route("[controller]")]
-    public class AdminAuthController : ControllerBase
-    {
-        private readonly ILogger<AdminAuthController> _logger;
-
-        public AdminAuthController(ILogger<AdminAuthController> logger)
-        {
-            _logger = logger;
-        }
-
-        [HttpPost("Registration")]
-        public IActionResult CustomerRegistraion()
-        {
-            return Ok("Hello");
-        }
-
-        [HttpPost("Login")]
-        public IActionResult CustomerLogin()
+        public IActionResult CustomerLogin([FromBody] UserLoginDTO UserData)
         {
             return Ok("Hello");
         }

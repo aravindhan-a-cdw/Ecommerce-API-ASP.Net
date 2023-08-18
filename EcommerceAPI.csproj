@@ -17,6 +17,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,21 +25,21 @@
     <None Remove="Repository\" />
     <None Remove="Repository\IRepository\" />
     <None Remove="Models\DTO\" />
-    <None Remove="Models\DTO\Admin\" />
     <None Remove="Models\DTO\Cart\" />
     <None Remove="Models\DTO\Customer\" />
     <None Remove="Models\DTO\Product\" />
     <None Remove="Data\" />
+    <None Remove="Models\DTO\User\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
     <Folder Include="Repository\" />
     <Folder Include="Repository\IRepository\" />
     <Folder Include="Models\DTO\" />
-    <Folder Include="Models\DTO\Admin\" />
     <Folder Include="Models\DTO\Cart\" />
     <Folder Include="Models\DTO\Customer\" />
     <Folder Include="Models\DTO\Product\" />
     <Folder Include="Data\" />
+    <Folder Include="Models\DTO\User\" />
   </ItemGroup>
 </Project>
