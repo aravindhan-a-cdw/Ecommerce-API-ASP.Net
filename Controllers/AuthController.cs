@@ -23,14 +23,20 @@ namespace EcommerceAPI.Controllers
             return Ok("Hello");
         }
 
+        [HttpPost("Admin/Registration")]
+        public IActionResult AdminRegistraion([FromBody] UserCreateDTO UserData)
+        {
+            return Ok("Hello");
+        }
+
         [HttpPost("Login")]
-        public IActionResult CustomerLogin([FromBody] UserLoginDTO UserData)
+        public IActionResult UserLogin([FromBody] UserLoginDTO UserData)
         {
             return Ok("Hello");
         }
 
         [HttpPost("Logout")]
-        public IActionResult CustomerLogout()
+        public IActionResult UserLogout()
         {
             return Ok("Hello");
         }
