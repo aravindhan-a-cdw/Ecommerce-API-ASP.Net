@@ -12,6 +12,8 @@ namespace EcommerceAPI.Repository.IRepository
 
         Task RemoveAsync(T entity);
 
+        Task<T> UpdateAsync(T entity);
+
         Task SaveAsync();
     }
 }

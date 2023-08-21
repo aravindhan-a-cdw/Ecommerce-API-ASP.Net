@@ -56,6 +56,14 @@ namespace EcommerceAPI.Repository
             await SaveAsync();
         }
 
+        async public Task<T> UpdateAsync(T entity)
+        {
+            //entity = DateTime.UtcNow;
+            dbSet.Update(entity);
+            await SaveAsync();
+            return entity;
+        }
+
         public async Task SaveAsync()
         {
             await _dbContext.SaveChangesAsync();
