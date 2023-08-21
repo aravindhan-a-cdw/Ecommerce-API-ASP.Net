@@ -2,7 +2,9 @@
 using System.Text.Json.Serialization;
 using EcommerceAPI.Data;
 using Microsoft.EntityFrameworkCore;
-
+using EcommerceAPI.Repository.IRepository;
+using EcommerceAPI.Repository;
+using EcommerceAPI.Models;
 
 namespace EcommerceAPI;
 
@@ -27,6 +29,15 @@ public class Program
         {
             options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresqlConnection"));
         });
+
+        // Add Custom Services for Dependency Injection
+        // UserRepository Injection
+        builder.Services.AddScoped<IRepository<User>, UserRepository>();
+        // RoleRepository Injection
+        builder.Services.AddScoped<IRepository<Role>, RoleRepository>();
+
+        // Add Automapper Service
+        builder.Services.AddAutoMapper(typeof(MappingConfig));
 
         var app = builder.Build();
 
