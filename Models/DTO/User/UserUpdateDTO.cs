@@ -1,11 +1,11 @@
 ﻿using System;
 namespace EcommerceAPI.Models.DTO.User
 {
-	public class UserUpdateDTO
+	public class UserUpdateDTO: UserBaseDTO
 	{
-		public UserUpdateDTO()
-		{
-		}
-	}
+        public string? CurrentPassword { get; set; }
+
+        public string? NewPassword { get; set; }
+    }
 }
 

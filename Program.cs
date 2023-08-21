@@ -1,6 +1,8 @@
 ﻿
+using System.Text.Json.Serialization;
 using EcommerceAPI.Data;
 using Microsoft.EntityFrameworkCore;
+
 
 namespace EcommerceAPI;
 
@@ -12,6 +14,9 @@ public class Program
 
         // Add services to the container.
         builder.Services.AddControllers();
+
+        // To Convert Enum to String instead of Integers in the Swagger UI
+        builder.Services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();

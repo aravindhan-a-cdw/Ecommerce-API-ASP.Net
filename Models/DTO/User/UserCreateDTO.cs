@@ -1,11 +1,11 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+
 namespace EcommerceAPI.Models.DTO.User
 {
-	public class UserCreateDTO
+	public class UserCreateDTO: UserBaseDTO
 	{
-		public UserCreateDTO()
-		{
-		}
-	}
+        public required string Password { get; set; }
+    }
 }
 
