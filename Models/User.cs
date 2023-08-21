@@ -36,11 +36,6 @@ namespace EcommerceAPI.Models
 		public required string Password { get; set; }
 
 		public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
-
-		//public User()
-		//{
-		//	this.Roles.Ad
-		//}
 	}
 }
 
