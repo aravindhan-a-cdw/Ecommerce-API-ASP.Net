@@ -1,9 +1,12 @@
 ﻿using System;
-namespace EcommerceAPI.Models.DTO.Product
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace EcommerceAPI.Models.ProductDTO
 {
-	public class ProductCreateDTO
+	public class ProductCreateDTO: ProductBaseDTO
 	{
-		public ProductCreateDTO()
+
+        public ProductCreateDTO()
 		{
 		}
 	}

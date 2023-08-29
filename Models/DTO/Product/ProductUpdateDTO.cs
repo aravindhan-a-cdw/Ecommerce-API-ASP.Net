@@ -1,11 +1,9 @@
 ﻿using System;
-namespace EcommerceAPI.Models.DTO.Product
+namespace EcommerceAPI.Models.ProductDTO
 {
-	public class ProductUpdateDTO
+	public class ProductUpdateDTO: ProductBaseDTO
 	{
-		public ProductUpdateDTO()
-		{
-		}
+		public required int id { get; set; }
 	}
 }
 

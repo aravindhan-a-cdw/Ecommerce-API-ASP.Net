@@ -1,11 +1,13 @@
 ﻿using System;
-namespace EcommerceAPI.Models.DTO.Product
+using System.ComponentModel.DataAnnotations.Schema;
+using EcommerceAPI.Models.DTO.CategoryDTO;
+
+namespace EcommerceAPI.Models.ProductDTO
 {
-	public class ProductPublicDTO
+	public class ProductPublicDTO: ProductBaseDTO
 	{
-		public ProductPublicDTO()
-		{
-		}
+		public required int id { get; set; }
+		public required CategoryPublicDTO Category { get; set; }
 	}
 }
 

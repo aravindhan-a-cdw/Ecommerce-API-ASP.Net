@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace EcommerceAPI.Models.DTO.User
+namespace EcommerceAPI.Models.UserDTO
 {
 	public class UserCreateDTO: UserBaseDTO
 	{

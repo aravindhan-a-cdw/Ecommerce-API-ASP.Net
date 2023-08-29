@@ -1,11 +1,15 @@
 ﻿using System;
-namespace EcommerceAPI.Models.DTO.User
+using EcommerceAPI.Models.CartDTO;
+
+namespace EcommerceAPI.Models.UserDTO
 {
 	public class UserPublicDTO: UserBaseDTO
 	{
-		public UserPublicDTO()
-		{
-		}
-	}
+        public required string id { get; set; }
+
+        public required ICollection<CartPublicDTO> CartItems { get; set; }
+
+        public required ICollection<Order> Orders { get; set; }
+    }
 }
 

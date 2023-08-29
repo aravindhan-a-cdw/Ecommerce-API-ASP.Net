@@ -20,6 +20,11 @@
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.10" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.32.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.10" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.8" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,6 +37,9 @@
     <None Remove="Models\DTO\Product\" />
     <None Remove="Data\" />
     <None Remove="Models\DTO\User\" />
+    <None Remove="Models\DTO\InventoryDTO\" />
+    <None Remove="Models\DTO\CategoryDTO\" />
+    <None Remove="utils\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
@@ -43,5 +51,8 @@
     <Folder Include="Models\DTO\Product\" />
     <Folder Include="Data\" />
     <Folder Include="Models\DTO\User\" />
+    <Folder Include="Models\DTO\InventoryDTO\" />
+    <Folder Include="Models\DTO\CategoryDTO\" />
+    <Folder Include="utils\" />
   </ItemGroup>
 </Project>

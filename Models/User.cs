@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -9,11 +10,11 @@ namespace EcommerceAPI.Models
 		Male, Female, Others
 	}
 
-	public class User
+	public class User: IdentityUser
 	{
-		[Key]
-		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-		public int Id { get; set; }
+		//[Key]
+		//[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		//public override int Id { get; set; }
 
 		[Required]
 		[StringLength(64)]
@@ -23,19 +24,18 @@ namespace EcommerceAPI.Models
 		[StringLength(64)]
 		public required string LastName { get; set; }
 
-		[EmailAddress(ErrorMessage = "Invalid Email Address")]
-		[Required]
-		[StringLength(128)]
-		public required string Email { get; set; }
+		//[EmailAddress(ErrorMessage = "Invalid Email Address")]
+		//[Required]
+		//[StringLength(128)]
+		//public required string Email { get; set; }
 
 		public GenderType? Gender { get; set; } = null;
 
 		public DateOnly? DateOfBirth { get; set; } = null;
 
-		[StringLength(32)]
-		public required string Password { get; set; }
+		public ICollection<Cart> CartItems { get; set; } = new List<Cart>();
 
-		public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
+		public ICollection<Order> Orders { get; set; } = new List<Order>();
 	}
 }
 

@@ -1,5 +1,5 @@
 ﻿using System;
-namespace EcommerceAPI.Models.DTO.User
+namespace EcommerceAPI.Models.UserDTO
 {
 	public class UserLoginDTO
 	{
