@@ -5,6 +5,7 @@ using EcommerceAPI.Models.DTO.CategoryDTO;
 using EcommerceAPI.Models;
 using EcommerceAPI.Models.CartDTO;
 using EcommerceAPI.Models.DTO.InventoryDTO;
+using EcommerceAPI.Models.DTO.OrderDTO;
 
 namespace EcommerceAPI
 {
@@ -27,15 +28,20 @@ namespace EcommerceAPI
 			CreateMap<Category, CategoryPublicDTO>();
 			CreateMap<CategoryUpdateDTO, Category>();
 
+			// Inventory Mapper
+			CreateMap<InventoryCreateDTO, Inventory>();
+			CreateMap<Inventory, InventoryPublicDTO>();
+			CreateMap<InventoryUpdateDTO, Inventory>();
+
 			// Cart Mapper
 			CreateMap<CartItemAddDTO, Cart>();
 			CreateMap<Cart, CartPublicDTO>();
 			CreateMap<Cart, CartItemDTO>();
 
-			// Inventory Mapper
-			CreateMap<InventoryCreateDTO, Inventory>();
-			CreateMap<Inventory, InventoryPublicDTO>();
-			CreateMap<InventoryUpdateDTO, Inventory>();
+			// Order Mapper
+			CreateMap<Order, OrderPublicDTO>();
+			CreateMap<OrderItem, OrderItemPublicDTO>();
+
 		}
 	}
 }

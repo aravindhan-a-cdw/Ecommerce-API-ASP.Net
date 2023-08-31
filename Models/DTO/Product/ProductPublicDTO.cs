@@ -7,7 +7,7 @@ namespace EcommerceAPI.Models.ProductDTO
 	public class ProductPublicDTO: ProductBaseDTO
 	{
 		public required int id { get; set; }
-		public required CategoryPublicDTO Category { get; set; }
+		public required virtual CategoryPublicDTO Category { get; set; }
 	}
 }
 

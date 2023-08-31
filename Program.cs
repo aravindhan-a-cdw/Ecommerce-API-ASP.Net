@@ -21,17 +21,13 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
-        builder.Services.AddControllers();
-
         builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
-        // To Convert Enum to String instead of Integers in the Swagger UI
+        // Add services to the container and To Convert Enum to String instead of Integers in the Swagger UI
         builder.Services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
 
         // User Authentication with Custom User Model
         builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddTokenProvider<DataProtectorTokenProvider<User>>("Demo");
@@ -55,7 +51,9 @@ public class Program
             };
         });
 
-        builder.Services.AddAuthorization(options => { });
+        builder.Services.AddAuthorization();
+
+        builder.Services.AddResponseCaching();
 
         // Swagger Config for JWT Security
         builder.Services.AddSwaggerGen(options =>
@@ -118,6 +116,8 @@ public class Program
         builder.Services.AddScoped<Repository<Cart>, CartRepository>();
         builder.Services.AddScoped<Repository<User>, UserRepository>();
         builder.Services.AddScoped<InventoryRepository, InventoryRepository>();
+        builder.Services.AddScoped<Repository<Order>, OrderRepository>();
+        builder.Services.AddScoped<Repository<OrderItem>, OrderItemsRepository>();
 
         // Add Automapper Service
         builder.Services.AddAutoMapper(typeof(MappingConfig));

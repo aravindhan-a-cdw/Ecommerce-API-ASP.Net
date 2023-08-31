@@ -14,7 +14,7 @@ namespace EcommerceAPI.Repository
         public override async Task<Inventory?> GetAsync(System.Linq.Expressions.Expression<Func<Inventory, bool>> Filter, bool NoTracking = false)
         {
             IQueryable<Inventory> query = dbSet;
-            query = query.Include(record => record.Product);
+            query = query.Include(record => record.Product).OrderBy(record => record.Price);
 
             if (NoTracking)
             {

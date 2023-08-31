@@ -98,7 +98,7 @@ namespace EcommerceAPI.Repository
             return loginResponseDTO;
         }
 
-        async public Task<UserPublicDTO?> Register(UserCreateDTO registerationRequestDTO, string role)
+        async public Task<User?> Register(UserCreateDTO registerationRequestDTO, string role)
         {
             User user = _mapper.Map<User>(registerationRequestDTO);
             user.UserName = registerationRequestDTO.Email;
@@ -114,7 +114,7 @@ namespace EcommerceAPI.Repository
                 await _userManager.AddToRoleAsync(user, role);
                 var userToReturn = _db.ApplicationUsers
                     .FirstOrDefault(u => u.UserName == registerationRequestDTO.Email);
-                return _mapper.Map<UserPublicDTO>(userToReturn);
+                return userToReturn;
             }
 
             return null;

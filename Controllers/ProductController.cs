@@ -27,6 +27,7 @@ namespace EcommerceAPI.Controllers
 
 
         [HttpGet]
+        [ResponseCache(Duration=60)]
         async public Task<IActionResult> GetAllProducts()
         {
             var products = await _productRepository.GetAllAsync();

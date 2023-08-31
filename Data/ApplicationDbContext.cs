@@ -26,7 +26,7 @@ namespace EcommerceAPI.Data
 
         public DbSet<Inventory> Inventories { get; set; }
 
-        public DbSet<OrderItems> OrderItems { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -41,7 +41,7 @@ namespace EcommerceAPI.Data
             modelBuilder.Entity<Cart>()
                 .HasKey(bc => new { bc.ProductId, bc.UserId });
 
-            modelBuilder.Entity<OrderItems>().HasKey(record => new { record.OrderId, record.ProductId });
+            modelBuilder.Entity<OrderItem>().HasKey(record => new { record.OrderId, record.ProductId });
 
             modelBuilder.Entity<Cart>().HasOne(c => c.User).WithMany(c => c.CartItems).HasForeignKey(m => m.UserId);
 

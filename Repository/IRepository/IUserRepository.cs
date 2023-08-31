@@ -10,7 +10,7 @@ namespace EcommerceAPI.Repository.IRepository
 
         Task<LoginResponseDTO?> Login(UserLoginDTO loginRequestDTO);
 
-        Task<UserPublicDTO?> Register(UserCreateDTO registerationRequestDTO, string role);
+        Task<User?> Register(UserCreateDTO registerationRequestDTO, string role);
 
     }
 }

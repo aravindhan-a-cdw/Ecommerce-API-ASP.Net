@@ -1,5 +1,6 @@
 ﻿using System;
 using EcommerceAPI.Models.CartDTO;
+using EcommerceAPI.Models.DTO.OrderDTO;
 
 namespace EcommerceAPI.Models.UserDTO
 {
@@ -9,7 +10,7 @@ namespace EcommerceAPI.Models.UserDTO
 
         public required ICollection<CartPublicDTO> CartItems { get; set; }
 
-        public required ICollection<Order> Orders { get; set; }
+        public required ICollection<OrderPublicDTO> Orders { get; set; }
     }
 }
 

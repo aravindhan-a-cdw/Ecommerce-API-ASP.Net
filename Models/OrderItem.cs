@@ -1,12 +1,12 @@
 ﻿using System;
 namespace EcommerceAPI.Models
 {
-	public class OrderItems
+	public class OrderItem
 	{
-		public required Order Order { get; set; }
+		public Order Order { get; set; }
 		public required int OrderId { get; set; }
 
-		public required Product Product { get; set; }
+		public Product Product { get; set; }
 		public required int ProductId { get; set; }
 
 		public required int Quantity { get; set; }

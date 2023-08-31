@@ -6,6 +6,7 @@ using EcommerceAPI.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using EcommerceAPI.Models;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -39,41 +40,53 @@ namespace EcommerceAPI.Controllers
         [HttpPost]
         async public Task<IActionResult> CustomerRegistraion([FromBody] UserCreateDTO userData)
         {
-            Console.WriteLine(userData);
-            if(!_userRepository.isUniqueUser(userData.Email))
+            try
             {
-                return BadRequest("Email already exists");
+                var userDb = await createUser(userData, "customer");
+                if (userDb == null)
+                {
+                    return BadRequest("Data not valid");
+                }
+                return Ok(_mapper.Map<UserPublicDTO>(userDb));
+            } catch (Exception exc)
+            {
+                return BadRequest(exc.Message);
+            }
+        }
+
+        [NonAction]
+        async public Task<User?> createUser(UserCreateDTO userData, string role)
+        {
+            if (!_userRepository.isUniqueUser(userData.Email))
+            {
+                throw new Exception("Email already exists");
             }
             DateTime today = DateTime.Now;
             DateOnly minDate = new DateOnly(today.Year - 18, today.Month, today.Day);
 
-            if( userData.DateOfBirth > minDate)
+            if (userData.DateOfBirth > minDate)
             {
-                return BadRequest("You are not 18 years old yet! Come back later!");
+                throw new Exception("You are not 18 years old yet! Come back later!");
             }
-            var userDb = await _userRepository.Register(userData, "customer");
-
-            if (userDb == null)
-            {
-                return BadRequest("Data not valid");
-                //throw new Exception("User Could not be created");
-            }
-
-            return Ok(_mapper.Map<UserPublicDTO>(userDb));
+            return await _userRepository.Register(userData, role);
         }
 
         [HttpPost("admin")]
         async public Task<IActionResult> AdminRegistraion([FromBody] UserCreateDTO userData)
         {
-            Console.WriteLine(userData);
-            var userDb = await _userRepository.Register(userData, "admin");
-
-            if (userDb == null)
+            try
             {
-                throw new Exception("User Could not be created");
+                var userDb = await createUser(userData, "admin");
+                if (userDb == null)
+                {
+                    return BadRequest("Data not valid");
+                }
+                return Ok(_mapper.Map<UserPublicDTO>(userDb));
             }
-
-            return Ok(_mapper.Map<UserPublicDTO>(userDb));
+            catch (Exception exc)
+            {
+                return BadRequest(exc.Message);
+            }
         }
 
         [HttpPost("Login")]

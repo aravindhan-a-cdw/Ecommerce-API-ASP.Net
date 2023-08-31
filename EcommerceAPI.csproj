@@ -40,6 +40,7 @@
     <None Remove="Models\DTO\InventoryDTO\" />
     <None Remove="Models\DTO\CategoryDTO\" />
     <None Remove="utils\" />
+    <None Remove="Models\DTO\OrderDTO\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
@@ -54,5 +55,6 @@
     <Folder Include="Models\DTO\InventoryDTO\" />
     <Folder Include="Models\DTO\CategoryDTO\" />
     <Folder Include="utils\" />
+    <Folder Include="Models\DTO\OrderDTO\" />
   </ItemGroup>
 </Project>
