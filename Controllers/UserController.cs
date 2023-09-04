@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using EcommerceAPI.Models;
+using StackExchange.Redis;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -19,12 +20,16 @@ namespace EcommerceAPI.Controllers
         private readonly ILogger<UserController> _logger;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly IConnectionMultiplexer _redis;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserController(ILogger<UserController> logger, IMapper mapper, IUserRepository userRepository)
+        public UserController(ILogger<UserController> logger, IMapper mapper, IUserRepository userRepository, IConnectionMultiplexer redis, IHttpContextAccessor contextAccessor)
         {
             _logger = logger;
             _userRepository = userRepository;
             _mapper = mapper;
+            _redis = redis;
+            _httpContextAccessor = contextAccessor;
         }
 
         // TODO: Check if you need to send cart and orders along
@@ -102,10 +107,20 @@ namespace EcommerceAPI.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("Logout")]
-        public IActionResult UserLogout()
+        async public Task<IActionResult> UserLogout()
         {
+            Console.WriteLine(HttpContext);
+            var JWTToken = _httpContextAccessor.HttpContext.Request.Headers.Authorization.FirstOrDefault().Split(" ")[1];
+
+            var db = _redis.GetDatabase();
+            //var value = await db.StringGetAsync(JWTToken);
+            //if (value != RedisValue.Null)
+            //{
+            //    return Unauthorized("Token is already loggout");
+            //}
+            await db.StringSetAndGetAsync(JWTToken, new RedisValue(""), new TimeSpan(0, minutes: 30, 0));
             //HttpContext.Session.Clear();
-            return Ok("Hello");
+            return NoContent();
         }
     }
 }

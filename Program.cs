@@ -12,6 +12,7 @@ using System.Text;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using EcommerceAPI.utils;
+using StackExchange.Redis;
 
 namespace EcommerceAPI;
 
@@ -34,6 +35,7 @@ public class Program
 
         // Add JWT Authentication
         var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
+
         builder.Services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -49,6 +51,8 @@ public class Program
                 ValidateAudience = false,
                 ValidateIssuer = false
             };
+            options.SecurityTokenValidators.Clear();
+            options.SecurityTokenValidators.Add(new JWTValidator(ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisCache"))));
         });
 
         builder.Services.AddAuthorization();
@@ -108,6 +112,8 @@ public class Program
             options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresqlConnection"));
         });
 
+        builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisCache")));
+
         // Add Custom Services for Dependency Injection
         // UserRepository Injection
         builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -116,11 +122,13 @@ public class Program
         builder.Services.AddScoped<Repository<Cart>, CartRepository>();
         builder.Services.AddScoped<Repository<User>, UserRepository>();
         builder.Services.AddScoped<InventoryRepository, InventoryRepository>();
-        builder.Services.AddScoped<Repository<Order>, OrderRepository>();
+        builder.Services.AddScoped<Repository<Models.Order>, OrderRepository>();
         builder.Services.AddScoped<Repository<OrderItem>, OrderItemsRepository>();
 
         // Add Automapper Service
         builder.Services.AddAutoMapper(typeof(MappingConfig));
+
+        builder.Services.AddHttpContextAccessor();
 
         var app = builder.Build();
 
