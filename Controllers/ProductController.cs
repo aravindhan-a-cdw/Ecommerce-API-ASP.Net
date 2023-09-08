@@ -6,90 +6,78 @@ using EcommerceAPI.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
+using Swashbuckle.AspNetCore.Annotations;
+using EcommerceAPI.Repository.IRepository;
+using EcommerceAPI.Services.IServices;
 
 namespace EcommerceAPI.Controllers
 {
+    /*
+     * @author Aravindhan A
+     * @description This is the controller class for Product related Routes. Admin can CRUD a product whereas user can only View or Read product.
+     */
+
     [ApiController]
     [Route("[controller]")]
     public class ProductController : ControllerBase
     {
+        private readonly IProductService _productService;
 
-        private readonly Repository<Product> _productRepository;
-        private readonly Repository<Category> _categoryRepository;
-        private readonly IMapper _mapper;
-
-        public ProductController(Repository<Product> productRepository, Repository<Category> categoryRepository, IMapper mapper)
+        public ProductController(IProductService productService)
         {
-            _productRepository = productRepository;
-            _categoryRepository = categoryRepository;
-            _mapper = mapper;
+            _productService = productService;
         }
 
 
         [HttpGet]
         [ResponseCache(Duration=60)]
+        [SwaggerOperation(summary: "Get all Products", description: "This endpoint gets list of all products")]
         async public Task<IActionResult> GetAllProducts()
         {
-            var products = await _productRepository.GetAllAsync();
-            return Ok(_mapper.Map<List<ProductPublicDTO>>(products));
+            var products = await _productService.GetAllProductsAsync();
+            return Ok(products);
         }
 
-        [HttpGet("{id}", Name = "GetProduct")]
+
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        async public Task<IActionResult> GetProduct([FromRoute] int id)
+        [SwaggerOperation(summary: "Get details of a Single Product", description: "This endpoint gets a product with its id")]
+        [HttpGet("{productId}", Name = "GetProduct")]
+        async public Task<IActionResult> GetProduct([FromRoute] int productId)
         {
-            var product = await _productRepository.GetAsync(record => record.Id == id);
-            if(product == null)
-            {
-                return NotFound("Record not found!");
-            }
-            return Ok(_mapper.Map<ProductPublicDTO>(product));
+            var product = await _productService.GetProductAsync(productId);
+            return Ok(product);
         }
 
 
-        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [SwaggerOperation(summary: "Create a new product", description: "This endpoint allows admin to create a new product")]
         [Authorize(Roles = "admin")]
+        [HttpPost]
         async public Task<IActionResult> CreateProduct([FromBody] ProductCreateDTO productDto)
         {
-            var product = _mapper.Map<Product>(productDto);
-            var category = await _categoryRepository.GetAsync(record => record.Id == productDto.CategoryId);
-            if (category == null)
-            {
-                return BadRequest("Category Doesn't exist");
-            }
-            //product.Category = category;
-            var productDb = await _productRepository.CreateAsync(product);
-            return CreatedAtRoute("GetProduct", new { id = productDb.Id }, _mapper.Map<ProductPublicDTO>(productDb));
+            var product = await _productService.CreateProductAsync(productDto);
+            return Ok(product);
         }
 
-        [HttpPut("{id}")]
+        
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [SwaggerOperation(summary: "Update Product details", description: "This endpoint allows admin to update a product")]
         [Authorize(Roles = "admin")]
-        async public Task<IActionResult> UpdateProduct([FromRoute] int id, [FromBody] ProductUpdateDTO productUpdate)
+        [HttpPut("{productId}")]
+        async public Task<IActionResult> UpdateProduct([FromRoute] int productId, [FromBody] ProductUpdateDTO productUpdate)
         {
-            var product = await _productRepository.GetAsync(record => record.Id == id, true);
-            if(product == null)
-            {
-                return NotFound("Record not found!");
-            }
-
-            product.Name = productUpdate.Name;
-            product.Description = productUpdate.Description;
-            product.CategoryId = productUpdate.CategoryId;
-            product.Images = productUpdate.Images;
-            Product updated = await _productRepository.UpdateAsync(product);
-            return Ok(_mapper.Map<ProductPublicDTO>(updated));
+            var updated = await _productService.UpdateProductAsync(productId, productUpdate);
+            return Ok(updated);
         }
 
-        [HttpDelete("{id}")]
+
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [SwaggerOperation(summary: "Delete Product", description: "This endpoint allows admin to delete a product")]
+        [HttpDelete("{productId}")]
         [Authorize(Roles = "admin")]
-        async public Task<IActionResult> DeleteProduct([FromRoute] int id)
+        async public Task<IActionResult> DeleteProduct([FromRoute] int productId)
         {
-            var product = await _productRepository.GetAsync(record => record.Id == id, true);
-            if (product == null)
-            {
-                return NotFound("Record not found!");
-            }
-            await _productRepository.RemoveAsync(product);
+            await _productService.DeleteProductAsync(productId);
             return NoContent();
         }
 

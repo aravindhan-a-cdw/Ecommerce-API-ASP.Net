@@ -1,7 +1,11 @@
 ﻿using System;
 namespace EcommerceAPI.Models
 {
-	public class Inventory
+    /*
+     * @author Aravindhan A
+     * @description This is the Inventory Model which will be used in DbContext to create Table in Db
+     */
+    public class Inventory
 	{
 		public int Id { get; set; }
 

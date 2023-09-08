@@ -10,9 +10,13 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Filters;
 using EcommerceAPI.utils;
 using StackExchange.Redis;
+using EcommerceAPI.Services.IServices;
+using EcommerceAPI.Services;
+using Microsoft.AspNetCore.Diagnostics;
+using EcommerceAPI.Models.DTO;
+using System.Text.Json;
 
 namespace EcommerceAPI;
 
@@ -27,7 +31,6 @@ public class Program
         // Add services to the container and To Convert Enum to String instead of Integers in the Swagger UI
         builder.Services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
 
         // User Authentication with Custom User Model
@@ -36,6 +39,7 @@ public class Program
         // Add JWT Authentication
         var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
 
+        // Add authentication and authorization middlewares
         builder.Services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -57,11 +61,13 @@ public class Program
 
         builder.Services.AddAuthorization();
 
+        // Cache Response
         builder.Services.AddResponseCaching();
 
         // Swagger Config for JWT Security
         builder.Services.AddSwaggerGen(options =>
         {
+            options.EnableAnnotations();
             options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
             {
                 Scheme = "Bearer",
@@ -70,64 +76,41 @@ public class Program
                 Name = "Authorization",
                 Description = "JWT Authorization using Bearer Scheme in Header"
             });
-
-            //options.AddSecurityRequirement(new OpenApiSecurityRequirement{
-            //    {
-            //        new OpenApiSecurityScheme{
-            //            Reference = new OpenApiReference{
-            //                Id = "Bearer", //The name of the previously defined security scheme.
-            //                Type = ReferenceType.SecurityScheme
-            //            },
-            //            Scheme = "oauth2",
-            //            Name = "Bearer",
-            //        },new List<string>()
-            //    }
-            //});
-            //options.AddSecurityRequirement(new OpenApiSecurityRequirement()
-            //{
-            //    {
-            //        new OpenApiSecurityScheme
-            //        {
-            //            BearerFormat = "JWT",
-            //            Reference = new OpenApiReference
-            //            {
-            //                Type = ReferenceType.SecurityScheme,
-            //                Id = JwtBearerDefaults.AuthenticationScheme
-            //            },
-            //            Scheme = "oauth2",
-            //            Name = "Bearer",
-            //            In = ParameterLocation.Header,
-            //            Type = SecuritySchemeType.Http
-            //        },
-            //        new List<string>()
-            //    }
-            //});
-
+            // Filter to add Swagger lock only to Routes that require Authorization
             options.OperationFilter<SecurityFilter>();
         });
 
-        // Add database
+        // Add database Context
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
         {
             options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresqlConnection"));
         });
 
+        // Add Redis Connection Dependency
         builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisCache")));
 
         // Add Custom Services for Dependency Injection
-        // UserRepository Injection
+        // Repository Injection
         builder.Services.AddScoped<IUserRepository, UserRepository>();
-        builder.Services.AddScoped<Repository<Product>, ProductRepository>();
-        builder.Services.AddScoped<Repository<Category>, CategoryRepository>();
-        builder.Services.AddScoped<Repository<Cart>, CartRepository>();
-        builder.Services.AddScoped<Repository<User>, UserRepository>();
-        builder.Services.AddScoped<InventoryRepository, InventoryRepository>();
-        builder.Services.AddScoped<Repository<Models.Order>, OrderRepository>();
-        builder.Services.AddScoped<Repository<OrderItem>, OrderItemsRepository>();
+        builder.Services.AddScoped<IRepository<User>, UserRepository>();
+        builder.Services.AddScoped<IRepository<Product>, Repository<Product>>();
+        builder.Services.AddScoped<IRepository<Category>, Repository<Category>>();
+        builder.Services.AddScoped<IRepository<Cart>, Repository<Cart>>();
+        builder.Services.AddScoped<IRepository<Inventory>, Repository<Inventory>>();
+        builder.Services.AddScoped<IRepository<Models.Order>, Repository<Models.Order>>();
+        builder.Services.AddScoped<IRepository<OrderItem>, Repository<OrderItem>>();
 
+        // Service Injection
+        builder.Services.AddScoped<ICartService, CartService>();
+        builder.Services.AddScoped<ICategoryService, CategoryService>();
+        builder.Services.AddScoped<IInventoryService, InventoryService>();
+        builder.Services.AddScoped<IProductService, ProductService>();
+        builder.Services.AddScoped<IUserService, UserService>();
+        
         // Add Automapper Service
         builder.Services.AddAutoMapper(typeof(MappingConfig));
 
+        // Add ContextAccessor to access headers in logout route
         builder.Services.AddHttpContextAccessor();
 
         var app = builder.Build();
@@ -144,12 +127,26 @@ public class Program
         app.UseAuthentication();
         app.UseAuthorization();
 
+        // Exception Handler
         app.UseExceptionHandler(builder =>
         {
-            builder.Run(context =>
+            builder.Run(async context =>
             {
-                context.Response.WriteAsync("Error occurred");
-                return Task.CompletedTask;
+                var exception = context.Features.Get<IExceptionHandlerFeature>().Error;
+                if (exception is BadHttpRequestException)
+                {
+                    var obj = (BadHttpRequestException)exception;
+                    context.Response.ContentType = "application/json";
+                    context.Response.StatusCode = obj.StatusCode;
+                    var response = new APIResponseDTO(obj.StatusCode, obj.Message);
+                    var json = JsonSerializer.Serialize(response);
+                    await context.Response.WriteAsync(json);
+                }
+                else
+                {
+                    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                    await context.Response.WriteAsync("Unknown Error");
+                }
             });
         });
 

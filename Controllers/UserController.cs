@@ -8,40 +8,54 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using EcommerceAPI.Models;
 using StackExchange.Redis;
+using Swashbuckle.AspNetCore.Annotations;
+using EcommerceAPI.Services.IServices;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace EcommerceAPI.Controllers
 {
+    /*
+     * @author Aravindhan A
+     * @description This is the controller class for User related Routes. A new customer or admin account can be generated and that account
+     * credentials can be used to obtain JWT token for further requests
+     */
+
     [ApiController]
     [Route("[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly ILogger<UserController> _logger;
+        /// <summary>
+        /// This is the Controller for User routes to Create, Read or Update both Customer and Admin along with login and logout routes
+        /// </summary>
+        /// 
+        
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-        private readonly IConnectionMultiplexer _redis;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IUserService _userService;
 
-        public UserController(ILogger<UserController> logger, IMapper mapper, IUserRepository userRepository, IConnectionMultiplexer redis, IHttpContextAccessor contextAccessor)
+        public UserController(IMapper mapper, IUserRepository userRepository, IHttpContextAccessor contextAccessor, IUserService userService)
         {
-            _logger = logger;
             _userRepository = userRepository;
             _mapper = mapper;
-            _redis = redis;
             _httpContextAccessor = contextAccessor;
+            _userService = userService;
         }
 
         // TODO: Check if you need to send cart and orders along
-        [HttpGet]
         [Authorize]
+        [SwaggerOperation(summary: "Get user details", description: "This endpoint retrieves user details and users orders and cart items")]
+        [HttpGet]
         async public Task<IActionResult> GetUser()
         {
             var User = HttpContext.User;
-            var user = await _userRepository.GetAsync(record => record.Email == User.Identity.Name);
+            var user = await _userRepository.GetAsync(record => record.Email == User.Identity.Name, Include: new() {"Orders", "CartItems"});
             return Ok(_mapper.Map<UserPublicDTO>(user));
         }
 
+
+        [SwaggerOperation(summary: "Create a new Customer", description: "This endpoint allows to register a new Customer")]
         [HttpPost]
         async public Task<IActionResult> CustomerRegistraion([FromBody] UserCreateDTO userData)
         {
@@ -59,6 +73,14 @@ namespace EcommerceAPI.Controllers
             }
         }
 
+
+        /// <summary>
+        ///     Create new user and stores in the db
+        /// </summary>
+        /// <param name="userData">User Details</param>
+        /// <param name="role">Role of the User</param>
+        /// <returns>User Object</returns>
+        /// <exception cref="Exception">Throws exception when data is not acceptable</exception>
         [NonAction]
         async public Task<User?> createUser(UserCreateDTO userData, string role)
         {
@@ -73,53 +95,45 @@ namespace EcommerceAPI.Controllers
             {
                 throw new Exception("You are not 18 years old yet! Come back later!");
             }
-            return await _userRepository.Register(userData, role);
+            return await _userService.Register(userData, role);
         }
 
+
+        [SwaggerOperation(summary: "Create new Admin", description: "This endpoint allows to create a new Admin user")]
         [HttpPost("admin")]
         async public Task<IActionResult> AdminRegistraion([FromBody] UserCreateDTO userData)
         {
-            try
-            {
-                var userDb = await createUser(userData, "admin");
-                if (userDb == null)
-                {
-                    return BadRequest("Data not valid");
-                }
+            
+                var userDb = await _userService.Register(userData, "admin");
                 return Ok(_mapper.Map<UserPublicDTO>(userDb));
-            }
-            catch (Exception exc)
-            {
-                return BadRequest(exc.Message);
-            }
         }
 
+
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [SwaggerOperation(summary: "Login user and get access token", description: "This endpoint allows users to login in and get access token")]
         [HttpPost("Login")]
         async public Task<IActionResult> UserLogin([FromBody] UserLoginDTO userData)
         {
+            /// <summary>
+            /// Route to login user
+            /// </summary>
+            
             var user = await _userRepository.Login(userData);
-            if (user == null)
-            {
-                return BadRequest("Username and Password doesn't match!");
-            }
             return Ok(user);
         }
 
+
+        [SwaggerOperation(summary: "Logout user and invalidate the token", description: "This endpoint allows user to logout and invalidate the access token")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("Logout")]
-        async public Task<IActionResult> UserLogout()
+        public IActionResult UserLogout()
         {
-            Console.WriteLine(HttpContext);
-            var JWTToken = _httpContextAccessor.HttpContext.Request.Headers.Authorization.FirstOrDefault().Split(" ")[1];
+            /// <summary>
+            /// Route to logout user
+            /// </summary>
 
-            var db = _redis.GetDatabase();
-            //var value = await db.StringGetAsync(JWTToken);
-            //if (value != RedisValue.Null)
-            //{
-            //    return Unauthorized("Token is already loggout");
-            //}
-            await db.StringSetAndGetAsync(JWTToken, new RedisValue(""), new TimeSpan(0, minutes: 30, 0));
-            //HttpContext.Session.Clear();
+            var JWTToken = _httpContextAccessor.HttpContext.Request.Headers.Authorization.FirstOrDefault().Split(" ")[1];
+            _userService.Logout(JWTToken);
             return NoContent();
         }
     }

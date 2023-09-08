@@ -5,8 +5,8 @@ using EcommerceAPI.Models.UserDTO;
 namespace EcommerceAPI.Repository.IRepository
 {
 	public interface IUserRepository: IRepository<User>
-	{
-		public bool isUniqueUser(string Username);
+    { 
+        public bool isUniqueUser(string Username);
 
         Task<LoginResponseDTO?> Login(UserLoginDTO loginRequestDTO);
 

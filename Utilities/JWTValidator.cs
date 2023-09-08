@@ -6,6 +6,10 @@ using StackExchange.Redis;
 
 namespace EcommerceAPI.utils
 {
+    /*
+     * @author Aravindhan A
+     * @description This is a class for custom validation of jwt token
+     */
 	public class JWTValidator: ISecurityTokenValidator
 	{
         private readonly SecurityTokenHandler _securityTokenHandler;
@@ -26,6 +30,11 @@ namespace EcommerceAPI.utils
             return _securityTokenHandler.CanReadToken(securityToken);
         }
 
+
+        /*
+         * @author Aravindhan A
+         * @description This method validates token and ensures only the token in Redis is not allowed to authenticate
+         */
         public ClaimsPrincipal ValidateToken(string securityToken, TokenValidationParameters validationParameters, out SecurityToken validatedToken)
         {
             var principal = _securityTokenHandler.ValidateToken(securityToken, validationParameters, out validatedToken);
@@ -39,12 +48,6 @@ namespace EcommerceAPI.utils
             }
             return principal;
         }
-
-        //private bool HasAccessTokenType(ClaimsPrincipal principal)
-        //{
-        //    return principal.Claims.FirstOrDefault(x => x.Type == AppConsts.TokenType)?.Value ==
-        //           TokenType.AccessToken.To().ToString();
-        //}
     }
 }
 

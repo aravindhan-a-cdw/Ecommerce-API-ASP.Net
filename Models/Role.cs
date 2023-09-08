@@ -3,7 +3,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EcommerceAPI.Models
 {
-	public class Role
+    /*
+     * @author Aravindhan A
+     * @description This is the Role Model which will be used in DbContext to create Table in Db
+     */
+    public class Role
 	{
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

@@ -7,119 +7,94 @@ using EcommerceAPI.Models;
 using EcommerceAPI.Models.DTO.InventoryDTO;
 using EcommerceAPI.Repository;
 using EcommerceAPI.Repository.IRepository;
+using EcommerceAPI.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace EcommerceAPI.Controllers
 {
+    /*
+     * @author Aravindhan A
+     * @description This is the controller class for Inventory related Routes.
+     */
+
     [ApiController]
     [Route("[controller]")]
     [Authorize(Roles = "admin")]
     public class InventoryController : ControllerBase
     {
-        private readonly IMapper _mapper;
-        private readonly InventoryRepository _inventoryRepository;
-        private readonly Repository<Product> _productRepository;
-        private readonly IUserRepository _userRepository;
+        private readonly IInventoryService _inventoryService;
 
-        public InventoryController(IMapper mapper, InventoryRepository inventoryRepository, Repository<Product> productRepository, IUserRepository userRepository)
+        public InventoryController(IInventoryService inventoryService)
         {
-            _mapper = mapper;
-            _inventoryRepository = inventoryRepository;
-            _productRepository = productRepository;
-            _userRepository = userRepository;
+            _inventoryService = inventoryService;
         }
 
+
+        [SwaggerOperation(summary: "Get all inventories of all products", description: "This endpoint allows admin to get all inventories of all products")]
         [HttpGet]
         async public Task<IActionResult> GetInventories()
         {
-            var inventories = await _inventoryRepository.GetAllAsync();
+            var inventories = await _inventoryService.GetInventoriesAsync();
 
-            return Ok(_mapper.Map<List<InventoryPublicDTO>>(inventories));
+            return Ok(inventories);
         }
 
+
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [SwaggerOperation(summary: "Get All Inventory of a Product", description: "This endpoint allows admin to get all the inventory of products")]
         [HttpGet("{productId}")]
         async public Task<IActionResult> GetAllInventoryOfProduct(int productId)
         {
-            var inventory = await _inventoryRepository.GetAllAsync(record => record.ProductId == productId);
-            if (inventory == null)
-            {
-                return BadRequest("Record doesn't exist!");
-            }
-            return Ok(_mapper.Map<List<InventoryPublicDTO>>(inventory));
+            var inventories = await _inventoryService.GetAllInventoryOfProductAsync(productId);
+            return Ok(inventories);
         }
 
+
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [SwaggerOperation(summary: "Get a single Inventory with Id", description: "This endpoint allows admin to view Inventory of a Product")]
         [HttpGet("{productId}/{inventoryId}")]
-        async public Task<IActionResult> GetAInventory(int productId, int inventoryId)
+        async public Task<IActionResult> GetInventory(int productId, int inventoryId)
         {
-            var inventory = await _inventoryRepository.GetAsync(record => record.Id == inventoryId);
-            if(inventory == null)
-            {
-                return NotFound("Record doesn't exist!");
-            }
-            return Ok(_mapper.Map<InventoryPublicDTO>(inventory));
+            var inventory = await _inventoryService.GetInventoryAsync(inventoryId);
+            return Ok(inventory);
         }
 
+
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [SwaggerOperation(summary: "Create New Inventory for Product", description: "This endpoint allows admin to create New Inventory")]
         [HttpPost]
         async public Task<IActionResult> CreateInventory(InventoryCreateDTO inventoryCreate)
         {
-            var product = await _productRepository.GetAsync(record => record.Id == inventoryCreate.ProductId, NoTracking: true);
-            if(product == null)
-            {
-                return BadRequest("No product found for your given input");
-            }
-            var user = HttpContext.User;
-            var inventoryDb = _mapper.Map<Inventory>(inventoryCreate);
-            var userDb = await _userRepository.GetAsync(record => record.Email == user.Identity.Name);
-            if(userDb == null)
-            {
-                return BadRequest("User not found in database");
-            }
-            inventoryDb.CreatedBy = userDb;
-            var inventory = await _inventoryRepository.CreateAsync(inventoryDb);
-            return Ok(_mapper.Map<InventoryPublicDTO>(inventory));
+            var userEmail = HttpContext.User.Identity.Name ?? "";
+
+            var inventory = await _inventoryService.CreateInventoryAsync(inventoryCreate, userEmail);
+            return Ok(inventory);
         }
 
+
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [SwaggerOperation(summary: "Update the inventory of a Product", description: "This endpoint allows Admin to update the inventory of a product")]
         [HttpPut("{inventoryId}")]
         async public Task<IActionResult> UpdateInventory(int inventoryId, InventoryUpdateDTO inventoryUpdate)
         {
-            if(inventoryId != inventoryUpdate.Id)
-            {
-                return BadRequest("Id doesn't match in path and body");
-            }
-            var inventory = await _inventoryRepository.GetAsync(record => record.Id == inventoryId, NoTracking: true);
-            if (inventory == null)
-            {
-                return NotFound("Record doesn't exist!");
-            }
-            var product = await _productRepository.GetAsync(record => record.Id == inventoryUpdate.ProductId, NoTracking: true);
-            if (product == null)
-            {
-                return BadRequest("No product found for your given input");
-            }
-            var user = HttpContext.User;
-            var inventoryDb = _mapper.Map<Inventory>(inventoryUpdate);
-            var userDb = await _userRepository.GetAsync(record => record.Email == user.Identity.Name, NoTracking: true);
-            if (userDb == null)
-            {
-                return BadRequest("User not found in database");
-            }
-            inventoryDb.CreatedBy = userDb;
-            inventory = await _inventoryRepository.UpdateAsync(inventoryDb);
-            return Ok(_mapper.Map<InventoryPublicDTO>(inventory));
+            var userEmail = HttpContext.User.Identity.Name ?? "";
+
+            var inventory = _inventoryService.UpdateInventoryAsync(inventoryId, inventoryUpdate, userEmail);
+            return Ok(inventory);
         }
 
+
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [SwaggerOperation(summary: "Delete a Inventory for a Product", description: "This endpoint allows Admin to delete Inventory of a Product")]
         [HttpDelete("{inventoryId}")]
         async public Task<IActionResult> DeleteInventory(int inventoryId)
         {
-            var inventory = await _inventoryRepository.GetAsync(record => record.Id == inventoryId);
-            if(inventory == null)
-            {
-                return NotFound("Record doesn't exist!");
-            }
-            await _inventoryRepository.RemoveAsync(inventory);
+            await _inventoryService.DeleteInventoryAsync(inventoryId);
             return NoContent();
         }
     }

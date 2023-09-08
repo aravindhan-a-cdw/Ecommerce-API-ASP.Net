@@ -4,7 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EcommerceAPI.Models
 {
-	public class Category
+    /*
+     * @author Aravindhan A
+     * @description This is the Category Model which will be used in DbContext to create Table in Db
+     */
+    public class Category
 	{
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

@@ -21,11 +21,13 @@ namespace EcommerceAPI
 			// Product Mapper
 			CreateMap<ProductCreateDTO, Product>();
 			CreateMap<Product, ProductPublicDTO>();
+			CreateMap<Product, ProductBaseDTO>();
 			CreateMap<ProductUpdateDTO, Product>();
 
 			// Category Mapper
 			CreateMap<CategoryCreateDTO, Category>();
 			CreateMap<Category, CategoryPublicDTO>();
+			CreateMap<Category, CategoryBaseDTO>();
 			CreateMap<CategoryUpdateDTO, Category>();
 
 			// Inventory Mapper

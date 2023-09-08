@@ -41,32 +41,10 @@ namespace EcommerceAPI.Repository
             return user == null;
         }
 
-        public override async Task<User?> GetAsync(System.Linq.Expressions.Expression<Func<User, bool>> Filter, bool NoTracking = false)
-        {
-            IQueryable<User> query = dbSet;
-
-            if (NoTracking)
-            {
-                query = query.AsNoTracking();
-            }
-            query = query.Include(record => record.CartItems).Include(record => record.Orders);
-            if (Filter != null)
-            {
-                query = query.Where(Filter);
-            }
-            return await query.FirstOrDefaultAsync();
-        }
-
         public async Task<LoginResponseDTO?> Login(UserLoginDTO userData)
 		{
             var user = _db.ApplicationUsers.FirstOrDefault(record => record.Email == userData.Email);
             bool isValid = await _userManager.CheckPasswordAsync(user, userData.Password);
-            //var tokenNew = await _userManager.GenerateUserTokenAsync(user, "Demo", "Just checking");
-
-            //var loginInfo = new UserLoginInfo("Demo", SecretKey, "Demo");
-            //await _userManager.AddLoginAsync(user, loginInfo);
-            //var tokenNew = await _userManager.CreateSecurityTokenAsync(user);
-            
             
             if (user == null || isValid == false)
             {
@@ -98,7 +76,7 @@ namespace EcommerceAPI.Repository
             return loginResponseDTO;
         }
 
-        async public Task<User?> Register(UserCreateDTO registerationRequestDTO, string role)
+        async public Task<User?> Register(UserCreateDTO registerationRequestDTO, string role) 
         {
             User user = _mapper.Map<User>(registerationRequestDTO);
             user.UserName = registerationRequestDTO.Email;
@@ -118,11 +96,6 @@ namespace EcommerceAPI.Repository
             }
 
             return null;
-        }
-
-        async public Task Logout()
-        {
-
         }
     }
 }

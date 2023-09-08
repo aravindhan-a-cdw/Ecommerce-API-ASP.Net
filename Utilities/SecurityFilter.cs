@@ -7,6 +7,10 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace EcommerceAPI.utils
 {
+    /*
+     * @author Aravindhan A
+     * @description This is security filter for swagger which will only show pad lock symbol only if authorize attribute is present on the controller method
+     */
     public class SecurityFilter : IOperationFilter
     {
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
@@ -20,19 +24,12 @@ namespace EcommerceAPI.utils
                 .OfType<AuthorizeAttribute>()
                 .Select(attr => attr.Policy)
                 .Distinct();
-            //var requiredScopes = requiredPolicies.Select(p => _authorizationOptions.GetPolicy(p))
-            //    .SelectMany(r => r.Requirements.OfType<ClaimsAuthorizationRequirement>())
-            //    .Where(cr => cr.ClaimType == "scope")
-            //    .SelectMany(r => r.AllowedValues)
-            //    .Distinct()
-            //    .ToList();
 
             if (!hasAllowAnonymous && requiredPolicies.Any())
             {
                 var securityRequirement = new OpenApiSecurityRequirement()
             {
                 {
-                    // Put here you own security scheme, this one is an example
                     new OpenApiSecurityScheme
                     {
                         Reference = new OpenApiReference

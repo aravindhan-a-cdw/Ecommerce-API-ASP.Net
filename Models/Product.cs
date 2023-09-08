@@ -4,7 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EcommerceAPI.Models
 {
-	public class Product
+    /*
+     * @author Aravindhan A
+     * @description This is the Product Model which will be used in DbContext to create Table in Db
+     */
+    public class Product
 	{
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]

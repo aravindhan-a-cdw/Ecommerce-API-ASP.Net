@@ -6,12 +6,14 @@ namespace EcommerceAPI.Models.UserDTO
 	public class UserBaseDTO
 	{
         [StringLength(64)]
+        [RegularExpression("[a-zA-Z]+", ErrorMessage ="Firstname should only contain alphabets")]
         public required string FirstName { get; set; }
 
         [StringLength(64)]
+        [RegularExpression("[a-zA-Z]+")]
         public required string LastName { get; set; }
 
-        [StringLength(128)]
+        [EmailAddress()]
         public required string Email { get; set; }
 
         public GenderType Gender { get; set; }

@@ -5,11 +5,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EcommerceAPI.Models
 {
-	public enum GenderType
+    public enum GenderType
 	{
 		Male, Female, Others
 	}
 
+    /*
+     * @author Aravindhan A
+     * @description This is the User Model which extends IdentityUser with our additional fields
+     */
 	public class User: IdentityUser
 	{
 		//[Key]

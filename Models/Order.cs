@@ -4,7 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EcommerceAPI.Models
 {
-	public class Order
+    /*
+     * @author Aravindhan A
+     * @description This is the Order Model which will be used in DbContext to create Table in Db
+     */
+    public class Order
 	{
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

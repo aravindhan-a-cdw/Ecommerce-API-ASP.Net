@@ -4,7 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EcommerceAPI.Models
 {
-	public class Cart
+    /*
+     * @author Aravindhan A
+     * @description This is the Cart Model which will be used in DbContext to create Table in Db
+     */
+    public class Cart
 	{
         public int ProductId { get; set; }
         public virtual required Product Product { get; set; }
