@@ -28,7 +28,7 @@ namespace EcommerceAPI.Services
 
         public async Task<ProductPublicDTO> GetProductAsync(int productId)
         {
-            var product = await _productRepository.GetAsync(record => record.Id == productId);
+            var product = await _productRepository.GetAsync(record => record.Id == productId, Include: new() { "Category"});
             if (product == null)
             {
                 throw new BadHttpRequestException("Record not found!", StatusCodes.Status404NotFound);
@@ -51,7 +51,7 @@ namespace EcommerceAPI.Services
 
         public async Task<ProductPublicDTO> UpdateProductAsync(int productId, ProductUpdateDTO productUpdate)
         {
-            var product = await _productRepository.GetAsync(record => record.Id == productId, true);
+            var product = await _productRepository.GetAsync(record => record.Id == productId, true, Include: new() { "Category"});
             if (product == null)
             {
                 throw new BadHttpRequestException("Record not found!", StatusCodes.Status404NotFound);

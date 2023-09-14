@@ -17,6 +17,7 @@ using EcommerceAPI.Services;
 using Microsoft.AspNetCore.Diagnostics;
 using EcommerceAPI.Models.DTO;
 using System.Text.Json;
+using EcommerceAPI.Utilities;
 
 namespace EcommerceAPI;
 
@@ -34,10 +35,17 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
 
         // User Authentication with Custom User Model
-        builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddTokenProvider<DataProtectorTokenProvider<User>>("Demo");
+        builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
 
-        // Add JWT Authentication
-        var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
+        // Get Values from Configuration file
+        var JWT_SECRET = builder.Configuration.GetValue<string>(Constants.JWT_SECRET_CONFIGURATION_KEY);
+        var REDIS_CONNECTION_STRING = builder.Configuration.GetConnectionString(Constants.REDIS_CONFIGURATION_KEY);
+        var POSTGRES_CONNECTION_STRING = builder.Configuration.GetConnectionString(Constants.POSTGRES_CONFIGURATION_KEY);
+
+        if(JWT_SECRET == null || REDIS_CONNECTION_STRING == null || POSTGRES_CONNECTION_STRING == null)
+        {
+            throw new Exception(Constants.Messages.CONFIGURATION_KEY_NOT_SET);
+        }
 
         // Add authentication and authorization middlewares
         builder.Services.AddAuthentication(options =>
@@ -51,12 +59,12 @@ public class Program
             options.TokenValidationParameters = new TokenValidationParameters()
             {
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(JWT_SECRET)),
                 ValidateAudience = false,
                 ValidateIssuer = false
             };
             options.SecurityTokenValidators.Clear();
-            options.SecurityTokenValidators.Add(new JWTValidator(ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisCache"))));
+            options.SecurityTokenValidators.Add(new JWTValidator(ConnectionMultiplexer.Connect(REDIS_CONNECTION_STRING)));
         });
 
         builder.Services.AddAuthorization();
@@ -68,13 +76,13 @@ public class Program
         builder.Services.AddSwaggerGen(options =>
         {
             options.EnableAnnotations();
-            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+            options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme()
             {
-                Scheme = "Bearer",
+                Scheme = JwtBearerDefaults.AuthenticationScheme,
                 Type = SecuritySchemeType.Http,
                 In = ParameterLocation.Header,
                 Name = "Authorization",
-                Description = "JWT Authorization using Bearer Scheme in Header"
+                Description = Constants.Swagger.JWT_SECURITY_DESCRIPTION
             });
             // Filter to add Swagger lock only to Routes that require Authorization
             options.OperationFilter<SecurityFilter>();
@@ -83,11 +91,11 @@ public class Program
         // Add database Context
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
         {
-            options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresqlConnection"));
+            options.UseNpgsql(POSTGRES_CONNECTION_STRING);
         });
 
         // Add Redis Connection Dependency
-        builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisCache")));
+        builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(REDIS_CONNECTION_STRING));
 
         // Add Custom Services for Dependency Injection
         // Repository Injection
@@ -132,7 +140,10 @@ public class Program
         {
             builder.Run(async context =>
             {
-                var exception = context.Features.Get<IExceptionHandlerFeature>().Error;
+                var exceptionFeature = context.Features.Get<IExceptionHandlerFeature>();
+                if (exceptionFeature == null) return;
+
+                var exception = exceptionFeature.Error;
                 if (exception is BadHttpRequestException)
                 {
                     var obj = (BadHttpRequestException)exception;
@@ -145,7 +156,7 @@ public class Program
                 else
                 {
                     context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                    await context.Response.WriteAsync("Unknown Error");
+                    await context.Response.WriteAsync(Constants.Messages.UNHANDLED_EXCEPTION);
                 }
             });
         });

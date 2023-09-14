@@ -1,13 +1,9 @@
-﻿
-using AutoMapper;
-using EcommerceAPI.Models;
-using EcommerceAPI.Repository;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using EcommerceAPI.Models.DTO.CategoryDTO;
-using Swashbuckle.AspNetCore.Annotations;
-using EcommerceAPI.Repository.IRepository;
+﻿using EcommerceAPI.Models.DTO.CategoryDTO;
 using EcommerceAPI.Services.IServices;
+using EcommerceAPI.Utilities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace EcommerceAPI.Controllers
 {
@@ -19,7 +15,7 @@ namespace EcommerceAPI.Controllers
 
     [ApiController]
     [Route("[controller]")]
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = Constants.Roles.ADMIN)]
     public class CategoryController : ControllerBase
     {
         /// <summary>
@@ -39,7 +35,7 @@ namespace EcommerceAPI.Controllers
         /// </summary>
         [HttpGet]
         [AllowAnonymous]
-        [SwaggerOperation(summary:"Get all Categories and its related Products", description: "This endpoint provides all the categories and a list of all its related products")]
+        [SwaggerOperation(summary: Constants.Swagger.Category.GET_ALL_SUMMARY, description: Constants.Swagger.Category.GET_ALL_DESCRIPTION)]
         async public Task<IActionResult> GetAllCategories()
         {
             var categories = await _categoryService.GetAllCategoriesAsync();
@@ -50,10 +46,10 @@ namespace EcommerceAPI.Controllers
         /// <summary>
         /// Route to get a Category and its related products
         /// </summary>
-        [HttpGet("{categoryId}", Name = "GetCategory")]
+        [HttpGet("{categoryId}")]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [SwaggerOperation(summary: "Get a Category and list of its related Products", description: "This endpoint gets a category and its list of related products")]
+        [SwaggerOperation(summary: Constants.Swagger.Category.GET_CATEGORY_SUMMARY, description: Constants.Swagger.Category.GET_CATEGORY_DESCRIPTION)]
         async public Task<IActionResult> GetCategory([FromRoute] int categoryId)
         {
             var category = await _categoryService.GetCategoryAsync(categoryId);
@@ -66,7 +62,7 @@ namespace EcommerceAPI.Controllers
         /// </summary>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [SwaggerOperation(summary: "Create a new Category", description: "This endpoint allows the admin to create a new category")]
+        [SwaggerOperation(summary: Constants.Swagger.Category.CREATE_CATEGORY_SUMMARY, description: Constants.Swagger.Category.CREATE_CATEGORY_DESCRIPTION)]
         async public Task<IActionResult> CreateCategory([FromBody] CategoryCreateDTO categoryCreate)
         {
             var category = await _categoryService.CreateCategoryAsync(categoryCreate);
@@ -78,7 +74,7 @@ namespace EcommerceAPI.Controllers
         /// Route to Update a Category
         /// </summary>
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [SwaggerOperation(summary: "Update a category by providing its id", description: "This endpoint allows the admin to update category")]
+        [SwaggerOperation(summary: Constants.Swagger.Category.UPDATE_CATEGORY_SUMMARY, description: Constants.Swagger.Category.UPDATE_CATEGORY_DESCRIPTION)]
         [HttpPut("{categoryId}")]
         async public Task<IActionResult> UpdateCategory([FromRoute] int categoryId, [FromBody] CategoryUpdateDTO updateDTO)
         {
@@ -91,7 +87,7 @@ namespace EcommerceAPI.Controllers
         /// Route to Delete a Category
         /// </summary>
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [SwaggerOperation(summary: "Delete a category by providing its id", description: "This endpoint allows the admin to delete a category")]
+        [SwaggerOperation(summary: Constants.Swagger.Category.DELETE_CATEGORY_SUMMARY, description: Constants.Swagger.Category.DELETE_CATEGORY_DESCRIPTION)]
         [HttpDelete("{categoryId}")]
         async public Task<IActionResult> DeleteCategory([FromRoute] int categoryId)
         {

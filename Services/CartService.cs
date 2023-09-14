@@ -153,8 +153,8 @@ namespace EcommerceAPI.Services
                         throw new BadHttpRequestException($"The Product {cartItem.Product.Name} is out of stock!");
                     }
                     var orderItem = new OrderItem { OrderId = orderDb.Id, ProductId = cartItem.ProductId, Quantity = cartItem.Quantity, Price = inventory.Price };
-                    inventory.QuantitySold += cartItem.Quantity;
-                    inventory.QuantityAvailable -= cartItem.Quantity;
+                    inventory.QuantitySold = inventory.QuantitySold + cartItem.Quantity;
+                    inventory.QuantityAvailable = inventory.QuantityAvailable - cartItem.Quantity;
                     await _orderItemsRepository.CreateAsync(orderItem);
                     await _inventoryRepository.UpdateAsync(inventory);
                     await _cartRepository.RemoveAsync(cartItem);

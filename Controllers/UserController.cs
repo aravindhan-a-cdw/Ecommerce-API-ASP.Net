@@ -10,6 +10,7 @@ using EcommerceAPI.Models;
 using StackExchange.Redis;
 using Swashbuckle.AspNetCore.Annotations;
 using EcommerceAPI.Services.IServices;
+using EcommerceAPI.Utilities;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -22,7 +23,7 @@ namespace EcommerceAPI.Controllers
      */
 
     [ApiController]
-    [Route("[controller]")]
+    [Route(Constants.Routes.CONTROLLER)]
     public class UserController : ControllerBase
     {
         /// <summary>
@@ -45,7 +46,7 @@ namespace EcommerceAPI.Controllers
 
         // TODO: Check if you need to send cart and orders along
         [Authorize]
-        [SwaggerOperation(summary: "Get user details", description: "This endpoint retrieves user details and users orders and cart items")]
+        [SwaggerOperation(summary: Constants.Swagger.User.GET_USER_SUMMARY, description: Constants.Swagger.User.GET_USER_DESCRIPTION)]
         [HttpGet]
         async public Task<IActionResult> GetUser()
         {
@@ -55,16 +56,16 @@ namespace EcommerceAPI.Controllers
         }
 
 
-        [SwaggerOperation(summary: "Create a new Customer", description: "This endpoint allows to register a new Customer")]
+        [SwaggerOperation(summary: Constants.Swagger.User.CUSTOMER_REGISTRATION_SUMMARY, description: Constants.Swagger.User.CUSTOMER_REGISTRATION_DESCRIPTION)]
         [HttpPost]
         async public Task<IActionResult> CustomerRegistraion([FromBody] UserCreateDTO userData)
         {
             try
             {
-                var userDb = await createUser(userData, "customer");
+                var userDb = await createUser(userData, Constants.Roles.CUSTOMER);
                 if (userDb == null)
                 {
-                    return BadRequest("Data not valid");
+                    return BadRequest(Constants.Messages.DATA_NOT_VALID);
                 }
                 return Ok(_mapper.Map<UserPublicDTO>(userDb));
             } catch (Exception exc)
@@ -86,46 +87,46 @@ namespace EcommerceAPI.Controllers
         {
             if (!_userRepository.isUniqueUser(userData.Email))
             {
-                throw new Exception("Email already exists");
+                throw new BadHttpRequestException(Constants.Messages.EMAIL_EXISTS, StatusCodes.Status400BadRequest);
             }
             DateTime today = DateTime.Now;
             DateOnly minDate = new DateOnly(today.Year - 18, today.Month, today.Day);
 
             if (userData.DateOfBirth > minDate)
             {
-                throw new Exception("You are not 18 years old yet! Come back later!");
+                throw new BadHttpRequestException(Constants.Messages.AGE_NOT_ELIGIBLE);
             }
             return await _userService.Register(userData, role);
         }
 
 
-        [SwaggerOperation(summary: "Create new Admin", description: "This endpoint allows to create a new Admin user")]
+        [SwaggerOperation(summary: Constants.Swagger.User.ADMIN_REGISTRATION_SUMMARY, description: Constants.Swagger.User.ADMIN_REGISTRATION_DESCRIPTION)]
         [HttpPost("admin")]
         async public Task<IActionResult> AdminRegistraion([FromBody] UserCreateDTO userData)
         {
             
-                var userDb = await _userService.Register(userData, "admin");
+                var userDb = await _userService.Register(userData, Constants.Roles.ADMIN);
                 return Ok(_mapper.Map<UserPublicDTO>(userDb));
         }
 
 
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [SwaggerOperation(summary: "Login user and get access token", description: "This endpoint allows users to login in and get access token")]
-        [HttpPost("Login")]
+        [SwaggerOperation(summary: Constants.Swagger.User.USER_LOGIN_SUMMARY, description: Constants.Swagger.User.USER_LOGIN_DESCRIPTION)]
+        [HttpPost("login")]
         async public Task<IActionResult> UserLogin([FromBody] UserLoginDTO userData)
         {
             /// <summary>
             /// Route to login user
             /// </summary>
             
-            var user = await _userRepository.Login(userData);
+            var user = await _userService.Login(userData);
             return Ok(user);
         }
 
 
-        [SwaggerOperation(summary: "Logout user and invalidate the token", description: "This endpoint allows user to logout and invalidate the access token")]
+        [SwaggerOperation(summary: Constants.Swagger.User.USER_LOGOUT_SUMMARY, description: Constants.Swagger.User.USER_LOGOUT_DESCRIPTION)]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpPost("Logout")]
+        [HttpPost("logout")]
         public IActionResult UserLogout()
         {
             /// <summary>

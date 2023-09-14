@@ -5,7 +5,7 @@ namespace EcommerceAPI.Models.DTO.OrderDTO
 	{
         public DateTime CreatedAt { get; set; }
 
-        public virtual ICollection<OrderItem> OrderItems { get; set; }
+        //public virtual ICollection<OrderItem> OrderItems { get; set; }
     }
 }
 

@@ -53,11 +53,12 @@ namespace EcommerceAPI.Services
         {
             var query = _dbSet.Include("Orders").Include("CartItems");
             var user = query.FirstOrDefault(record => record.Email == userData.Email);
-            bool isValid = await _userManager.CheckPasswordAsync(user, userData.Password);
 
-            if (user == null || isValid == false)
+            bool isValid = user == null || await _userManager.CheckPasswordAsync(user, userData.Password);
+
+            if (isValid == false || user == null)
             {
-                throw new BadHttpRequestException("Record doesn't exist in db", StatusCodes.Status404NotFound);
+                throw new BadHttpRequestException("Username or password doesn't match", StatusCodes.Status404NotFound);
             }
 
             var roles = await _userManager.GetRolesAsync(user);

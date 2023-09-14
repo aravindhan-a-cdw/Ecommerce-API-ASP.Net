@@ -1,14 +1,10 @@
 ﻿
-using Microsoft.AspNetCore.Mvc;
 using EcommerceAPI.Models.ProductDTO;
-using EcommerceAPI.Repository;
-using EcommerceAPI.Models;
-using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using System.Data;
-using Swashbuckle.AspNetCore.Annotations;
-using EcommerceAPI.Repository.IRepository;
 using EcommerceAPI.Services.IServices;
+using EcommerceAPI.Utilities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace EcommerceAPI.Controllers
 {
@@ -18,7 +14,8 @@ namespace EcommerceAPI.Controllers
      */
 
     [ApiController]
-    [Route("[controller]")]
+    [Route(Constants.Routes.CONTROLLER)]
+    [Authorize(Roles = Constants.Roles.ADMIN)]
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
@@ -29,9 +26,9 @@ namespace EcommerceAPI.Controllers
         }
 
 
-        [HttpGet]
-        [ResponseCache(Duration=60)]
-        [SwaggerOperation(summary: "Get all Products", description: "This endpoint gets list of all products")]
+        [HttpGet(Name = Constants.Routes.Product.GET_ALL_PRODUCTS)]
+        [AllowAnonymous]
+        [SwaggerOperation(summary: Constants.Swagger.Product.GET_ALL_PRODUCTS_SUMMARY, description: Constants.Swagger.Product.GET_ALL_PRODUCTS_DESCRIPTION)]
         async public Task<IActionResult> GetAllProducts()
         {
             var products = await _productService.GetAllProductsAsync();
@@ -40,8 +37,10 @@ namespace EcommerceAPI.Controllers
 
 
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [SwaggerOperation(summary: "Get details of a Single Product", description: "This endpoint gets a product with its id")]
-        [HttpGet("{productId}", Name = "GetProduct")]
+        [SwaggerOperation(summary: Constants.Swagger.Product.GET_PRODUCT_SUMMARY, description: Constants.Swagger.Product.GET_PRODUCT_DESCRIPTION)]
+        [AllowAnonymous]
+        [HttpGet("{productId}", Name = Constants.Routes.Product.GET_PRODUCT)]
+        [ResponseCache(Duration = 60 * 60)]
         async public Task<IActionResult> GetProduct([FromRoute] int productId)
         {
             var product = await _productService.GetProductAsync(productId);
@@ -50,8 +49,7 @@ namespace EcommerceAPI.Controllers
 
 
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [SwaggerOperation(summary: "Create a new product", description: "This endpoint allows admin to create a new product")]
-        [Authorize(Roles = "admin")]
+        [SwaggerOperation(summary: Constants.Swagger.Product.CREATE_PRODUCT_SUMMARY, description: Constants.Swagger.Product.CREATE_PRODUCT_DESCRIPTION)]
         [HttpPost]
         async public Task<IActionResult> CreateProduct([FromBody] ProductCreateDTO productDto)
         {
@@ -61,8 +59,7 @@ namespace EcommerceAPI.Controllers
 
         
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [SwaggerOperation(summary: "Update Product details", description: "This endpoint allows admin to update a product")]
-        [Authorize(Roles = "admin")]
+        [SwaggerOperation(summary: Constants.Swagger.Product.UPDATE_PRODUCT_SUMMARY, description: Constants.Swagger.Product.UPDATE_PRODUCT_DESCRIPTION)]
         [HttpPut("{productId}")]
         async public Task<IActionResult> UpdateProduct([FromRoute] int productId, [FromBody] ProductUpdateDTO productUpdate)
         {
@@ -72,9 +69,8 @@ namespace EcommerceAPI.Controllers
 
 
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [SwaggerOperation(summary: "Delete Product", description: "This endpoint allows admin to delete a product")]
+        [SwaggerOperation(summary: Constants.Swagger.Product.DELETE_PRODUCT_SUMMARY, description: Constants.Swagger.Product.DELETE_PRODUCT_DESCRIPTION)]
         [HttpDelete("{productId}")]
-        [Authorize(Roles = "admin")]
         async public Task<IActionResult> DeleteProduct([FromRoute] int productId)
         {
             await _productService.DeleteProductAsync(productId);

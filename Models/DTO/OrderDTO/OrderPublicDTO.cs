@@ -5,7 +5,7 @@ namespace EcommerceAPI.Models.DTO.OrderDTO
 	{
 		public int Id { get; set; }
 
-		public required new ICollection<OrderItemPublicDTO> OrderItems { get; set; }
+		//public required new ICollection<OrderItemPublicDTO> OrderItems { get; set; }
 	}
 }
 

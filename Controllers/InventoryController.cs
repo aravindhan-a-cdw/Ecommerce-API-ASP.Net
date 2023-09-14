@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using EcommerceAPI.Models;
-using EcommerceAPI.Models.DTO.InventoryDTO;
-using EcommerceAPI.Repository;
-using EcommerceAPI.Repository.IRepository;
+﻿using EcommerceAPI.Models.DTO.InventoryDTO;
+using EcommerceAPI.Services;
 using EcommerceAPI.Services.IServices;
+using EcommerceAPI.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -22,19 +16,25 @@ namespace EcommerceAPI.Controllers
      */
 
     [ApiController]
-    [Route("[controller]")]
-    [Authorize(Roles = "admin")]
+    [Route(Constants.Routes.CONTROLLER)]
+    [Authorize(Roles = Constants.Roles.ADMIN)]
     public class InventoryController : ControllerBase
     {
         private readonly IInventoryService _inventoryService;
+        private readonly string _email = "";
 
-        public InventoryController(IInventoryService inventoryService)
+        public InventoryController(IInventoryService inventoryService, IHttpContextAccessor context)
         {
             _inventoryService = inventoryService;
+            if (context.HttpContext.User.Identity != null)
+            {
+                _email = context.HttpContext.User.Identity.Name ?? "";
+            }
+       
         }
 
 
-        [SwaggerOperation(summary: "Get all inventories of all products", description: "This endpoint allows admin to get all inventories of all products")]
+        [SwaggerOperation(summary: Constants.Swagger.Inventory.GET_INVENTORIES_SUMMARY, description: Constants.Swagger.Inventory.GET_INVENTORIES_DESCRIPTION)]
         [HttpGet]
         async public Task<IActionResult> GetInventories()
         {
@@ -45,7 +45,7 @@ namespace EcommerceAPI.Controllers
 
 
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [SwaggerOperation(summary: "Get All Inventory of a Product", description: "This endpoint allows admin to get all the inventory of products")]
+        [SwaggerOperation(summary: Constants.Swagger.Inventory.GET_ALL_INVENTORY_OF_PRODUCT_SUMMARY, description: Constants.Swagger.Inventory.GET_ALL_INVENTORY_OF_PRODUCT_DESCRIPTION)]
         [HttpGet("{productId}")]
         async public Task<IActionResult> GetAllInventoryOfProduct(int productId)
         {
@@ -55,7 +55,7 @@ namespace EcommerceAPI.Controllers
 
 
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [SwaggerOperation(summary: "Get a single Inventory with Id", description: "This endpoint allows admin to view Inventory of a Product")]
+        [SwaggerOperation(summary: Constants.Swagger.Inventory.GET_INVENTORY_SUMMARY, description: Constants.Swagger.Inventory.GET_INVENTORY_DESCRIPTION)]
         [HttpGet("{productId}/{inventoryId}")]
         async public Task<IActionResult> GetInventory(int productId, int inventoryId)
         {
@@ -65,32 +65,28 @@ namespace EcommerceAPI.Controllers
 
 
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [SwaggerOperation(summary: "Create New Inventory for Product", description: "This endpoint allows admin to create New Inventory")]
+        [SwaggerOperation(summary: Constants.Swagger.Inventory.CREATE_INVENTORY_SUMMARY, description: Constants.Swagger.Inventory.CREATE_INVENTORY_DESCRIPTION)]
         [HttpPost]
         async public Task<IActionResult> CreateInventory(InventoryCreateDTO inventoryCreate)
         {
-            var userEmail = HttpContext.User.Identity.Name ?? "";
-
-            var inventory = await _inventoryService.CreateInventoryAsync(inventoryCreate, userEmail);
+            var inventory = await _inventoryService.CreateInventoryAsync(inventoryCreate, _email);
             return Ok(inventory);
         }
 
 
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [SwaggerOperation(summary: "Update the inventory of a Product", description: "This endpoint allows Admin to update the inventory of a product")]
+        [SwaggerOperation(summary: Constants.Swagger.Inventory.UPDATE_INVENTORY_SUMMARY, description: Constants.Swagger.Inventory.UPDATE_INVENTORY_DESCRIPTION)]
         [HttpPut("{inventoryId}")]
         async public Task<IActionResult> UpdateInventory(int inventoryId, InventoryUpdateDTO inventoryUpdate)
         {
-            var userEmail = HttpContext.User.Identity.Name ?? "";
-
-            var inventory = _inventoryService.UpdateInventoryAsync(inventoryId, inventoryUpdate, userEmail);
+            var inventory = await _inventoryService.UpdateInventoryAsync(inventoryId, inventoryUpdate, _email);
             return Ok(inventory);
         }
 
 
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [SwaggerOperation(summary: "Delete a Inventory for a Product", description: "This endpoint allows Admin to delete Inventory of a Product")]
+        [SwaggerOperation(summary: Constants.Swagger.Inventory.DELETE_INVENTORY_SUMMARY, description: Constants.Swagger.Inventory.DELETE_INVENTORY_DESCRIPTION)]
         [HttpDelete("{inventoryId}")]
         async public Task<IActionResult> DeleteInventory(int inventoryId)
         {
