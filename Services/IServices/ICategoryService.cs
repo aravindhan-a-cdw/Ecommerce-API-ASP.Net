@@ -1,5 +1,4 @@
-﻿using System;
-using EcommerceAPI.Models.DTO.CategoryDTO;
+﻿using EcommerceAPI.Models.DTO.CategoryDTO;
 
 namespace EcommerceAPI.Services.IServices
 {

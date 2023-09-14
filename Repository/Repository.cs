@@ -1,5 +1,4 @@
-﻿using System;
-using EcommerceAPI.Data;
+﻿using EcommerceAPI.Data;
 using EcommerceAPI.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 

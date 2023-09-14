@@ -1,9 +1,8 @@
-﻿using System;
-using EcommerceAPI.Models.DTO.InventoryDTO;
+﻿using EcommerceAPI.Models.DTO.InventoryDTO;
 
 namespace EcommerceAPI.Services.IServices
 {
-	public interface IInventoryService
+    public interface IInventoryService
 	{
         Task<List<InventoryPublicDTO>> GetInventoriesAsync();
         Task<InventoryPublicDTO> GetInventoryOfProductAsync(int productId);

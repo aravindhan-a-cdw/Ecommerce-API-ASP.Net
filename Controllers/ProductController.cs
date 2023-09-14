@@ -1,11 +1,8 @@
-﻿
-using EcommerceAPI.Models.DTO.Product;
-using EcommerceAPI.Models.ProductDTO;
+﻿using EcommerceAPI.Models.ProductDTO;
 using EcommerceAPI.Services.IServices;
 using EcommerceAPI.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace EcommerceAPI.Controllers

@@ -7,7 +7,7 @@ using EcommerceAPI.Services.IServices;
 
 namespace EcommerceAPI.Services
 {
-	public class CartService: ICartService
+    public class CartService: ICartService
 	{
         private readonly IRepository<Cart> _cartRepository;
         private readonly IRepository<OrderItem> _orderItemsRepository;

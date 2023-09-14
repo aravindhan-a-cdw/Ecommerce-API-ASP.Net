@@ -1,9 +1,6 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using EcommerceAPI.Models;
+﻿using EcommerceAPI.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using System.Reflection.Metadata;
-using Microsoft.Extensions.Hosting;
+using Microsoft.EntityFrameworkCore;
 
 namespace EcommerceAPI.Data
 {

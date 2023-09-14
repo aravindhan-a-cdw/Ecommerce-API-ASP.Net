@@ -1,20 +1,17 @@
-﻿using System;
-using EcommerceAPI.Models;
-using EcommerceAPI.Data;
-using EcommerceAPI.Repository.IRepository;
-using Microsoft.AspNetCore.Mvc;
-using EcommerceAPI.Models.UserDTO;
-using Microsoft.AspNetCore.Identity;
-using System.IdentityModel.Tokens.Jwt;
-using AutoMapper;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using AutoMapper;
+using EcommerceAPI.Data;
+using EcommerceAPI.Models;
+using EcommerceAPI.Models.UserDTO;
+using EcommerceAPI.Repository.IRepository;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.EntityFrameworkCore;
 
 namespace EcommerceAPI.Repository
 {
-	public class UserRepository : Repository<User>, IUserRepository
+    public class UserRepository : Repository<User>, IUserRepository
 	{
 
         private readonly UserManager<User> _userManager;

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using AutoMapper;
 using EcommerceAPI.Models;
 using EcommerceAPI.Models.ProductDTO;
@@ -8,7 +7,7 @@ using EcommerceAPI.Services.IServices;
 
 namespace EcommerceAPI.Services
 {
-	public class ProductService: IProductService
+    public class ProductService: IProductService
 	{
         private readonly IRepository<Product> _productRepository;
         private readonly IRepository<Category> _categoryRepository;

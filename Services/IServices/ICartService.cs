@@ -1,5 +1,4 @@
-﻿using System;
-using EcommerceAPI.Models.CartDTO;
+﻿using EcommerceAPI.Models.CartDTO;
 using EcommerceAPI.Models.DTO.OrderDTO;
 
 namespace EcommerceAPI.Services.IServices

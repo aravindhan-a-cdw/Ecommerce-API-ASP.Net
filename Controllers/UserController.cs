@@ -1,16 +1,14 @@
 ﻿
-using Microsoft.AspNetCore.Mvc;
-using EcommerceAPI.Models.UserDTO;
 using AutoMapper;
-using EcommerceAPI.Repository.IRepository;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using EcommerceAPI.Models;
-using StackExchange.Redis;
-using Swashbuckle.AspNetCore.Annotations;
+using EcommerceAPI.Models.UserDTO;
+using EcommerceAPI.Repository.IRepository;
 using EcommerceAPI.Services.IServices;
 using EcommerceAPI.Utilities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

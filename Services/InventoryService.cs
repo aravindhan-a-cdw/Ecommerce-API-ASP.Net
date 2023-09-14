@@ -1,5 +1,4 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using EcommerceAPI.Models;
 using EcommerceAPI.Models.DTO.InventoryDTO;
 using EcommerceAPI.Repository.IRepository;
@@ -8,7 +7,7 @@ using EcommerceAPI.Utilities;
 
 namespace EcommerceAPI.Services
 {
-	public class InventoryService: IInventoryService
+    public class InventoryService: IInventoryService
 	{
         private readonly IRepository<Inventory> _inventoryRepository;
         private readonly IRepository<Product> _productRepository;

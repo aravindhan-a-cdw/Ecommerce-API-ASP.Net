@@ -25,14 +25,14 @@ namespace EcommerceAPI.Controllers
         /// </summary>
 
         private readonly ICartService _cartService;
-        private string _email = "";
+        private string _email = string.Empty;
 
         public CartController(ICartService cartService, IHttpContextAccessor context, CustomerUtility customerUtility)
         {
             _cartService = cartService;
             if(context.HttpContext.User.Identity != null)
             {
-                _email = context.HttpContext.User.Identity.Name ?? "";
+                _email = context.HttpContext.User.Identity.Name ?? string.Empty;
                 customerUtility.UpdateLastAccess(_email);
             }
         }

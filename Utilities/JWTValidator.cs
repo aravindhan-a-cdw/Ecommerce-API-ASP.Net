@@ -1,5 +1,4 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
@@ -10,7 +9,7 @@ namespace EcommerceAPI.utils
      * @author Aravindhan A
      * @description This is a class for custom validation of jwt token
      */
-	public class JWTValidator: ISecurityTokenValidator
+    public class JWTValidator: ISecurityTokenValidator
 	{
         private readonly SecurityTokenHandler _securityTokenHandler;
         private readonly IConnectionMultiplexer _redis;

@@ -1,10 +1,9 @@
-﻿using System;
-using EcommerceAPI.Models.DTO.Product;
+﻿using EcommerceAPI.Models.DTO.Product;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace EcommerceAPI.Utilities
 {
-	public class RequestsUtility
+    public class RequestsUtility
 	{
 		private readonly IMemoryCache _memoryCache;
         private const string BANNED_PRODUCTS_KEY = "BannedProducts";

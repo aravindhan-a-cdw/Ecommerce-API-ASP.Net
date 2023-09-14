@@ -1,5 +1,4 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using EcommerceAPI.Models;
 using EcommerceAPI.Models.DTO.CategoryDTO;
 using EcommerceAPI.Repository.IRepository;
@@ -7,7 +6,7 @@ using EcommerceAPI.Services.IServices;
 
 namespace EcommerceAPI.Services
 {
-	public class CategoryService: ICategoryService
+    public class CategoryService: ICategoryService
 	{
         private readonly IRepository<Category> _categoryRepository;
         private readonly IMapper _mapper;

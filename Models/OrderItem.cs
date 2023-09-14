@@ -1,5 +1,4 @@
-﻿using System;
-namespace EcommerceAPI.Models
+﻿namespace EcommerceAPI.Models
 {
     /*
      * @author Aravindhan A

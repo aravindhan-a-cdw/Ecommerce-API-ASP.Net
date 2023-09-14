@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using EcommerceAPI.Data;
+﻿using EcommerceAPI.Data;
 using EcommerceAPI.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Quartz;
-using Quartz.Impl;
 using Quartz.Spi;
 
 namespace EcommerceAPI.Utilities
