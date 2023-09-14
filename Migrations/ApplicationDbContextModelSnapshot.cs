@@ -41,7 +41,7 @@ namespace EcommerceAPI.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Cart");
+                    b.ToTable("CartItems");
                 });
 
             modelBuilder.Entity("EcommerceAPI.Models.Category", b =>
@@ -122,7 +122,7 @@ namespace EcommerceAPI.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("EcommerceAPI.Models.OrderItems", b =>
+            modelBuilder.Entity("EcommerceAPI.Models.OrderItem", b =>
                 {
                     b.Property<int>("OrderId")
                         .HasColumnType("integer");
@@ -204,6 +204,11 @@ namespace EcommerceAPI.Migrations
 
                     b.Property<int?>("Gender")
                         .HasColumnType("integer");
+
+                    b.Property<DateTime>("LastActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValue(new DateTime(2023, 9, 12, 12, 31, 20, 571, DateTimeKind.Utc).AddTicks(3700));
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -436,10 +441,10 @@ namespace EcommerceAPI.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("EcommerceAPI.Models.OrderItems", b =>
+            modelBuilder.Entity("EcommerceAPI.Models.OrderItem", b =>
                 {
                     b.HasOne("EcommerceAPI.Models.Order", "Order")
-                        .WithMany()
+                        .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -520,6 +525,11 @@ namespace EcommerceAPI.Migrations
             modelBuilder.Entity("EcommerceAPI.Models.Category", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("EcommerceAPI.Models.Order", b =>
+                {
+                    b.Navigation("OrderItems");
                 });
 
             modelBuilder.Entity("EcommerceAPI.Models.User", b =>

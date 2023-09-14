@@ -37,6 +37,8 @@ namespace EcommerceAPI.Models
 
 		public DateOnly? DateOfBirth { get; set; } = null;
 
+		public DateTime LastActive { get; set; } = DateTime.UtcNow;
+
 		public ICollection<Cart> CartItems { get; set; } = new List<Cart>();
 
 		public ICollection<Order> Orders { get; set; } = new List<Order>();

@@ -18,12 +18,17 @@ using Microsoft.AspNetCore.Diagnostics;
 using EcommerceAPI.Models.DTO;
 using System.Text.Json;
 using EcommerceAPI.Utilities;
+using Quartz;
+using Quartz.Impl;
+using static Quartz.Logging.OperationName;
+using System.Collections.Specialized;
 
 namespace EcommerceAPI;
 
 public class Program
 {
-    public static void Main(string[] args)
+
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -71,6 +76,7 @@ public class Program
 
         // Cache Response
         builder.Services.AddResponseCaching();
+        builder.Services.AddMemoryCache();
 
         // Swagger Config for JWT Security
         builder.Services.AddSwaggerGen(options =>
@@ -97,6 +103,10 @@ public class Program
         // Add Redis Connection Dependency
         builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(REDIS_CONNECTION_STRING));
 
+        // Utility Injection
+        builder.Services.AddScoped<CustomerUtility>();
+        builder.Services.AddScoped<RequestsUtility>();
+
         // Add Custom Services for Dependency Injection
         // Repository Injection
         builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -120,6 +130,59 @@ public class Program
 
         // Add ContextAccessor to access headers in logout route
         builder.Services.AddHttpContextAccessor();
+
+        builder.Services.AddQuartz(q =>
+        {
+            q.UseMicrosoftDependencyInjectionJobFactory();
+
+            q.AddJob<CartCleanJob>(opts => opts.WithIdentity("Cart"));
+
+            q.AddTrigger(opts => opts
+                .ForJob("Cart")
+                .WithIdentity("Cart-trigger")
+                //This Cron interval can be described as "run every minute" (when second is zero)
+                .StartNow()
+                .WithSimpleSchedule(x => x
+                    .WithIntervalInSeconds(50)
+                    .RepeatForever())
+            );
+
+            //var job = JobBuilder.Create<CartCleanJob>()
+            //    .WithIdentity("myJob", "group1")
+            //    .Build();
+            //var trigger = TriggerBuilder.Create()
+            //    .WithIdentity("myTrigger", "group1")
+            //    .StartNow()
+            //    .WithSimpleSchedule(x => x
+            //        .WithIntervalInSeconds(30)
+            //        .RepeatForever());
+            
+        });
+
+        builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
+
+        //var serviceProvider = serviceCollection.BuildServiceProvider();
+
+        //var props = new NameValueCollection
+        //    {
+        //        { "quartz.serializer.type", "binary" }
+        //    };
+        //var factory = new StdSchedulerFactory(props);
+        //var sched = await factory.GetScheduler();
+        //await sched.Start();
+        //var job = JobBuilder.Create<DemoJob>()
+        //    .WithIdentity("myJob", "group1")
+        //    .Build();
+        //var trigger = TriggerBuilder.Create()
+        //    .WithIdentity("myTrigger", "group1")
+        //    .StartNow()
+        //    .WithSimpleSchedule(x => x
+        //        .WithIntervalInSeconds(50)
+        //        .RepeatForever())
+        //.Build();
+        //await sched.ScheduleJob(job, trigger);
+        //sched.JobFactory = new DemoJobFactory(serviceProvider);
+        //sched.JobFactory = new DemoJobFactory(serviceProvider);
 
         var app = builder.Build();
 
@@ -162,6 +225,44 @@ public class Program
         });
 
         app.MapControllers();
+
+        ISchedulerFactory schedulerFactory = new StdSchedulerFactory();
+        IScheduler scheduler = schedulerFactory.GetScheduler().Result;
+
+//        var props = new NameValueCollection
+//{
+//    { "quartz.serializer.type", "binary" }
+//};
+//        var factory = new StdSchedulerFactory(props);
+//        var sched = await factory.GetScheduler();
+//        await sched.Start();
+//        var job = JobBuilder.Create<CartResetJob>()
+//            .WithIdentity("myJob", "group1")
+//            .Build();
+//        var trigger = TriggerBuilder.Create()
+//            .WithIdentity("myTrigger", "group1")
+//            .StartNow()
+//            .WithSimpleSchedule(x => x
+//                .WithIntervalInSeconds(5)
+//                .RepeatForever())
+//        .Build();
+//        await sched.ScheduleJob(job, trigger);
+
+        //        // Define a job and trigger
+        //        IJobDetail job = JobBuilder.Create<CartResetJob>().Build();
+        //        ITrigger trigger = TriggerBuilder.Create()
+        //            .WithIdentity("myTrigger")
+        //            .StartNow()
+        //            .WithSimpleSchedule(x => x
+        //                .WithIntervalInSeconds(5)
+        //                .RepeatForever())
+        //            .Build();
+
+        //        // Schedule the job with the trigger
+        //        scheduler.ScheduleJob(job, trigger);
+
+        //        // Start the scheduler
+        //        scheduler.Start();
 
         app.Run();
     }

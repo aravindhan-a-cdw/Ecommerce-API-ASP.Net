@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 using AutoMapper;
 using EcommerceAPI.Models;
 using EcommerceAPI.Models.ProductDTO;
@@ -20,9 +21,9 @@ namespace EcommerceAPI.Services
             _mapper = mapper;
         }
 
-        public async Task<List<ProductPublicDTO>> GetAllProductsAsync()
+        public async Task<List<ProductPublicDTO>> GetAllProductsAsync(Expression<Func<Product, bool>>? filter)
         {
-            var products = await _productRepository.GetAllAsync(Include: new() { "Category"});
+            var products = await _productRepository.GetAllAsync(Filter: filter, Include: new() { "Category"});
             return _mapper.Map<List<ProductPublicDTO>>(products);
         }
 

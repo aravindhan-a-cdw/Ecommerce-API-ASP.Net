@@ -17,6 +17,9 @@
             public const string DATA_NOT_VALID = "Data not valid!";
             public const string EMAIL_EXISTS = "Email already exists!";
             public const string AGE_NOT_ELIGIBLE = "You are not 18 years old yet! Come back later!";
+            public const string BANNED_PRODUCT = "The product has been banned by government";
+            public const string DISCLAIMER = "The requested product has an on going Trial and this platform is not responsible for the health quality of this product.";
+            public const string RESTRICT_QUANTITY = "The product has an ongoing trial and hence the maximum quantity must be less than or equal to 10";
         }
 
 		public static class Roles
@@ -25,6 +28,11 @@
 
 			public const string ADMIN = "admin";
 		}
+
+        public static class CacheExpiration
+        {
+            public const int BANNED_PRODUCTS_EXPIRY = 60 * 60 * 2;
+        }
 
         public static class Routes
         {

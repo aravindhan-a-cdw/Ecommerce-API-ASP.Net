@@ -29,6 +29,8 @@ namespace EcommerceAPI.Data
 
         public DbSet<OrderItem> OrderItems { get; set; }
 
+        public DbSet<Cart> CartItems { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
@@ -37,6 +39,8 @@ namespace EcommerceAPI.Data
             modelBuilder.Entity<Order>()
                 .Property(b => b.CreatedAt)
                 .HasDefaultValueSql("now()");
+
+            modelBuilder.Entity<User>().Property(b => b.LastActive).HasDefaultValue(DateTime.UtcNow);
 
             modelBuilder.Entity<Cart>()
                 .HasKey(bc => new { bc.ProductId, bc.UserId });

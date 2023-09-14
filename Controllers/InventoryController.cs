@@ -1,5 +1,4 @@
 ﻿using EcommerceAPI.Models.DTO.InventoryDTO;
-using EcommerceAPI.Services;
 using EcommerceAPI.Services.IServices;
 using EcommerceAPI.Utilities;
 using Microsoft.AspNetCore.Authorization;
@@ -21,14 +20,15 @@ namespace EcommerceAPI.Controllers
     public class InventoryController : ControllerBase
     {
         private readonly IInventoryService _inventoryService;
-        private readonly string _email = "";
+        private readonly string _email = string.Empty;
 
         public InventoryController(IInventoryService inventoryService, IHttpContextAccessor context)
         {
             _inventoryService = inventoryService;
+
             if (context.HttpContext.User.Identity != null)
             {
-                _email = context.HttpContext.User.Identity.Name ?? "";
+                _email = context.HttpContext.User.Identity.Name ?? string.Empty;
             }
        
         }
@@ -47,21 +47,21 @@ namespace EcommerceAPI.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [SwaggerOperation(summary: Constants.Swagger.Inventory.GET_ALL_INVENTORY_OF_PRODUCT_SUMMARY, description: Constants.Swagger.Inventory.GET_ALL_INVENTORY_OF_PRODUCT_DESCRIPTION)]
         [HttpGet("{productId}")]
-        async public Task<IActionResult> GetAllInventoryOfProduct(int productId)
+        async public Task<IActionResult> GetInventoryOfProduct(int productId)
         {
-            var inventories = await _inventoryService.GetAllInventoryOfProductAsync(productId);
+            var inventories = await _inventoryService.GetInventoryOfProductAsync(productId);
             return Ok(inventories);
         }
 
 
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [SwaggerOperation(summary: Constants.Swagger.Inventory.GET_INVENTORY_SUMMARY, description: Constants.Swagger.Inventory.GET_INVENTORY_DESCRIPTION)]
-        [HttpGet("{productId}/{inventoryId}")]
-        async public Task<IActionResult> GetInventory(int productId, int inventoryId)
-        {
-            var inventory = await _inventoryService.GetInventoryAsync(inventoryId);
-            return Ok(inventory);
-        }
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //[SwaggerOperation(summary: Constants.Swagger.Inventory.GET_INVENTORY_SUMMARY, description: Constants.Swagger.Inventory.GET_INVENTORY_DESCRIPTION)]
+        //[HttpGet("{productId}/{inventoryId}")]
+        //async public Task<IActionResult> GetInventory(int productId, int inventoryId)
+        //{
+        //    var inventory = await _inventoryService.GetInventoryAsync(inventoryId);
+        //    return Ok(inventory);
+        //}
 
 
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
