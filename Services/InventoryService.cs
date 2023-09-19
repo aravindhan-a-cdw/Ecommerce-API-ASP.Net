@@ -4,6 +4,7 @@ using EcommerceAPI.Models.DTO.InventoryDTO;
 using EcommerceAPI.Repository.IRepository;
 using EcommerceAPI.Services.IServices;
 using EcommerceAPI.Utilities;
+using EcommerceAPI.Utilities.IUtilities;
 
 namespace EcommerceAPI.Services
 {
@@ -13,14 +14,14 @@ namespace EcommerceAPI.Services
         private readonly IRepository<Product> _productRepository;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-        private readonly RequestsUtility _requestsUtility;
+        private readonly IRequestUtility _requestsUtility;
 
         public InventoryService(
             IRepository<Inventory> inventoryRepository,
             IRepository<Product> productRepository,
             IUserRepository userRepository,
             IMapper mapper,
-            RequestsUtility requestsUtility
+            IRequestUtility requestsUtility
             )
         {
             _inventoryRepository = inventoryRepository;

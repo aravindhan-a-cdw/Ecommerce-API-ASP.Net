@@ -48,7 +48,7 @@ namespace EcommerceAPI.Controllers
         [HttpGet]
         async public Task<IActionResult> GetUser()
         {
-            var User = HttpContext.User;
+            var User = _httpContextAccessor.HttpContext.User;
             var user = await _userRepository.GetAsync(record => record.Email == User.Identity.Name, Include: new() {"Orders", "CartItems"});
             return Ok(_mapper.Map<UserPublicDTO>(user));
         }
@@ -61,10 +61,6 @@ namespace EcommerceAPI.Controllers
             try
             {
                 var userDb = await createUser(userData, Constants.Roles.CUSTOMER);
-                if (userDb == null)
-                {
-                    return BadRequest(Constants.Messages.DATA_NOT_VALID);
-                }
                 return Ok(_mapper.Map<UserPublicDTO>(userDb));
             } catch (Exception exc)
             {
@@ -81,7 +77,7 @@ namespace EcommerceAPI.Controllers
         /// <returns>User Object</returns>
         /// <exception cref="Exception">Throws exception when data is not acceptable</exception>
         [NonAction]
-        async public Task<User?> createUser(UserCreateDTO userData, string role)
+        async public Task<User> createUser(UserCreateDTO userData, string role)
         {
             if (!_userRepository.isUniqueUser(userData.Email))
             {

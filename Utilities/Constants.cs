@@ -31,7 +31,15 @@
 
         public static class CacheExpiration
         {
-            public const int BANNED_PRODUCTS_EXPIRY = 60 * 60 * 2;
+            public const int BANNED_PRODUCTS_EXPIRY = 60 * 60 * 2; // 2 hours
+            public const int GET_PRODUCT_EXPIRY = 60 * 60; // 1 hour
+            public const int GET_ALL_PRODUCT_EXPIRY = 60 * 5; // 5 mins
+        }
+
+        public static class Utility
+        {
+            public const string BANNED_PRODUCTS_URL = "https://65014f45736d26322f5b7b24.mockapi.io/cosmo/ecart";
+
         }
 
         public static class Routes

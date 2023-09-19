@@ -52,6 +52,7 @@
     <None Remove="Services\" />
     <None Remove="Services\IServices\" />
     <None Remove="Utilities\" />
+    <None Remove="Utilities\IUtilities\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
@@ -68,5 +69,6 @@
     <Folder Include="Services\" />
     <Folder Include="Services\IServices\" />
     <Folder Include="Utilities\" />
+    <Folder Include="Utilities\IUtilities\" />
   </ItemGroup>
 </Project>

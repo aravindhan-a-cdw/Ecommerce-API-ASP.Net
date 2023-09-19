@@ -8,9 +8,9 @@ namespace EcommerceAPI.Models.UserDTO
 	{
         public required string id { get; set; }
 
-        public required ICollection<CartPublicDTO> CartItems { get; set; }
+        public ICollection<CartPublicDTO> CartItems { get; set; } = new List<CartPublicDTO>();
 
-        public required ICollection<OrderPublicDTO> Orders { get; set; }
+        public ICollection<OrderPublicDTO> Orders { get; set; } = new List<OrderPublicDTO>();
     }
 }
 

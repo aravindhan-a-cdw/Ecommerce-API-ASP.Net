@@ -1,6 +1,7 @@
 ﻿using EcommerceAPI.Models.ProductDTO;
 using EcommerceAPI.Services.IServices;
 using EcommerceAPI.Utilities;
+using EcommerceAPI.Utilities.IUtilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -18,9 +19,9 @@ namespace EcommerceAPI.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
-        private readonly RequestsUtility _requestsUtility;
+        private readonly IRequestUtility _requestsUtility;
 
-        public ProductController(IProductService productService, IHttpContextAccessor context, CustomerUtility customerUtility, RequestsUtility requestsUtility)
+        public ProductController(IProductService productService, IHttpContextAccessor context, CustomerUtility customerUtility, IRequestUtility requestsUtility)
         {
             _productService = productService;
             _requestsUtility = requestsUtility;

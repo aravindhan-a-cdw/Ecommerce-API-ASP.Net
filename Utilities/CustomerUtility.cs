@@ -1,8 +1,9 @@
 ﻿using EcommerceAPI.Data;
+using EcommerceAPI.Utilities.IUtilities;
 
 namespace EcommerceAPI.Utilities
 {
-    public class CustomerUtility
+    public class CustomerUtility: ICustomerUtility
 	{
         private readonly ApplicationDbContext _db;
 

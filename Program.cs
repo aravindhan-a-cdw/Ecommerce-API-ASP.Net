@@ -10,6 +10,7 @@ using EcommerceAPI.Repository.IRepository;
 using EcommerceAPI.Services;
 using EcommerceAPI.Services.IServices;
 using EcommerceAPI.Utilities;
+using EcommerceAPI.Utilities.IUtilities;
 using EcommerceAPI.utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
@@ -102,8 +103,8 @@ public class Program
         builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(REDIS_CONNECTION_STRING));
 
         // Utility Injection
-        builder.Services.AddScoped<CustomerUtility>();
-        builder.Services.AddScoped<RequestsUtility>();
+        builder.Services.AddScoped<ICustomerUtility, CustomerUtility>();
+        builder.Services.AddScoped<IRequestUtility, RequestUtility>();
 
         // Add Custom Services for Dependency Injection
         // Repository Injection
