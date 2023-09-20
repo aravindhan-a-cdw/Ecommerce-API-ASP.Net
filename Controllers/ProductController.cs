@@ -21,7 +21,7 @@ namespace EcommerceAPI.Controllers
         private readonly IProductService _productService;
         private readonly IRequestUtility _requestsUtility;
 
-        public ProductController(IProductService productService, IHttpContextAccessor context, CustomerUtility customerUtility, IRequestUtility requestsUtility)
+        public ProductController(IProductService productService, IHttpContextAccessor context, ICustomerUtility customerUtility, IRequestUtility requestsUtility)
         {
             _productService = productService;
             _requestsUtility = requestsUtility;

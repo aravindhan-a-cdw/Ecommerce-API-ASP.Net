@@ -1,6 +1,7 @@
 ﻿using EcommerceAPI.Models.CartDTO;
 using EcommerceAPI.Services.IServices;
 using EcommerceAPI.Utilities;
+using EcommerceAPI.Utilities.IUtilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -27,7 +28,7 @@ namespace EcommerceAPI.Controllers
         private readonly ICartService _cartService;
         private string _email = string.Empty;
 
-        public CartController(ICartService cartService, IHttpContextAccessor context, CustomerUtility customerUtility)
+        public CartController(ICartService cartService, IHttpContextAccessor context, ICustomerUtility customerUtility)
         {
             _cartService = cartService;
             if(context.HttpContext.User.Identity != null)
