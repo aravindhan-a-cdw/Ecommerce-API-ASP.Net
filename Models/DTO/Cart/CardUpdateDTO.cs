@@ -1,5 +1,5 @@
 ﻿using System;
-namespace EcommerceAPI.Models.DTO.Cart
+namespace EcommerceAPI.Models.CartDTO
 {
 	public class CardUpdateDTO
 	{

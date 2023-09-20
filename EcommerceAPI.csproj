@@ -17,6 +17,24 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.10" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.32.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.10" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.8" />
+    <PackageReference Include="StackExchange.Redis" Version="2.6.122" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
+    <PackageReference Include="xunit" Version="2.5.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Quartz" Version="3.7.0" />
+    <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.7.0" />
+    <PackageReference Include="Quartz.Extensions.Hosting" Version="3.7.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,21 +42,33 @@
     <None Remove="Repository\" />
     <None Remove="Repository\IRepository\" />
     <None Remove="Models\DTO\" />
-    <None Remove="Models\DTO\Admin\" />
-    <None Remove="Models\DTO\Cart\" />
-    <None Remove="Models\DTO\Customer\" />
     <None Remove="Models\DTO\Product\" />
     <None Remove="Data\" />
+    <None Remove="Models\DTO\User\" />
+    <None Remove="Models\DTO\InventoryDTO\" />
+    <None Remove="Models\DTO\CategoryDTO\" />
+    <None Remove="Models\DTO\OrderDTO\" />
+    <None Remove="Models\DTO\Cart\" />
+    <None Remove="Services\" />
+    <None Remove="Services\IServices\" />
+    <None Remove="Utilities\" />
+    <None Remove="Utilities\IUtilities\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
     <Folder Include="Repository\" />
     <Folder Include="Repository\IRepository\" />
     <Folder Include="Models\DTO\" />
-    <Folder Include="Models\DTO\Admin\" />
-    <Folder Include="Models\DTO\Cart\" />
-    <Folder Include="Models\DTO\Customer\" />
     <Folder Include="Models\DTO\Product\" />
     <Folder Include="Data\" />
+    <Folder Include="Models\DTO\User\" />
+    <Folder Include="Models\DTO\InventoryDTO\" />
+    <Folder Include="Models\DTO\CategoryDTO\" />
+    <Folder Include="Models\DTO\OrderDTO\" />
+    <Folder Include="Models\DTO\Cart\" />
+    <Folder Include="Services\" />
+    <Folder Include="Services\IServices\" />
+    <Folder Include="Utilities\" />
+    <Folder Include="Utilities\IUtilities\" />
   </ItemGroup>
 </Project>
